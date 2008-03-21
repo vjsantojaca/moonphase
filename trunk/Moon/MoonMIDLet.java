@@ -219,7 +219,7 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
      * @return the initialized component instance
      */
     public Form getMainForm1() {
-        if (mainForm1 == null) {//GEN-END:|14-getter|0|14-preInit
+       // if (mainForm1 == null) {//GEN-END:|14-getter|0|14-preInit
             // write pre-init user code here
             mainForm1 = new Form("Moon Phase", new Item[] { getImageItem(), getDateField(), getPhaseName_si(), getMoonAge_si() });//GEN-BEGIN:|14-getter|1|14-postInit
             mainForm1.addCommand(getExitCommand());
@@ -229,7 +229,7 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
             mainForm1.setCommandListener(this);//GEN-END:|14-getter|1|14-postInit
         // write post-init user code here
             mainForm1.setItemStateListener(this);
-        }//GEN-BEGIN:|14-getter|2|
+      //  }//GEN-BEGIN:|14-getter|2|
         return mainForm1;
     }
     //</editor-fold>//GEN-END:|14-getter|2|
@@ -448,7 +448,7 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
      * @return the initialized component instance
      */
     public Form getYearList1() {
-       // if (YearList1 == null) {//GEN-END:|44-getter|0|44-preInit
+        //if (YearList1 == null) {//GEN-END:|44-getter|0|44-preInit
             // write pre-init user code here
             // SKIP_CHECK for null #2
             YearList1 = new Form("", new Item[] { getStringItemListYear() });//GEN-BEGIN:|44-getter|1|44-postInit
