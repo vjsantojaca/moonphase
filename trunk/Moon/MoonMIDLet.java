@@ -297,7 +297,7 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
     public DateField getDateField() {
         if (dateField == null) {//GEN-END:|28-getter|0|28-preInit
             // write pre-init user code here
-            dateField = new DateField(null, DateField.DATE);//GEN-BEGIN:|28-getter|1|28-postInit
+            dateField = new DateField(null, DateField.DATE_TIME);//GEN-BEGIN:|28-getter|1|28-postInit
             dateField.setItemCommandListener(this);
             dateField.setDate(new java.util.Date(System.currentTimeMillis()));//GEN-END:|28-getter|1|28-postInit
             // write post-init user code here
@@ -366,7 +366,7 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
      * @return the initialized component instance
      */
     public StringItem getStringItemListYear() {
-        if (stringItemListYear == null) {//GEN-END:|46-getter|0|46-preInit
+        //if (stringItemListYear == null) {//GEN-END:|46-getter|0|46-preInit
 		//        if (stringItemListYear == null) {
             // write pre-init user code here
             // SKIP_CHECK for null
@@ -382,7 +382,7 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
             stringItemListYear.setText(_yearList);
             // write post-init user code here
         ///}
-        }//GEN-BEGIN:|46-getter|2|
+       // }//GEN-BEGIN:|46-getter|2|
         return stringItemListYear;
     }
     //</editor-fold>//GEN-END:|46-getter|2|
@@ -414,7 +414,6 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
             phaseName_si = new StringItem("Current phase:", null, Item.PLAIN);//GEN-BEGIN:|55-getter|1|55-postInit
             phaseName_si.addCommand(getDescribePhase());
             phaseName_si.setItemCommandListener(this);
-            phaseName_si.setDefaultCommand(getDescribePhase());
             phaseName_si.setLayout(ImageItem.LAYOUT_DEFAULT | ImageItem.LAYOUT_NEWLINE_BEFORE | ImageItem.LAYOUT_NEWLINE_AFTER);
             phaseName_si.setFont(getFont1());//GEN-END:|55-getter|1|55-postInit
             
@@ -449,7 +448,7 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
      * @return the initialized component instance
      */
     public Form getYearList1() {
-        if (YearList1 == null) {//GEN-END:|44-getter|0|44-preInit
+       // if (YearList1 == null) {//GEN-END:|44-getter|0|44-preInit
             // write pre-init user code here
             // SKIP_CHECK for null #2
             YearList1 = new Form("", new Item[] { getStringItemListYear() });//GEN-BEGIN:|44-getter|1|44-postInit
@@ -461,7 +460,7 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
             // write post-init user code here
             // SKIP_CHECK for null #2
 
-        }//GEN-BEGIN:|44-getter|2|
+       // }//GEN-BEGIN:|44-getter|2|
         return YearList1;
     }
     //</editor-fold>//GEN-END:|44-getter|2|
@@ -538,7 +537,7 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
     public Alert getHelpYearList() {
         if (HelpYearList == null) {//GEN-END:|86-getter|0|86-preInit
             // write pre-init user code here
-            HelpYearList = new Alert("New/Full Moon List", "The dates for new/full moon phases for the selected year.\nThe midlet shows phases for any year in the range 1902 to 2033.\nN - new moon.\nF - full moon.\n", getImage(), null);//GEN-BEGIN:|86-getter|1|86-postInit
+            HelpYearList = new Alert("New/Full Moon List", "The dates for new/full moon phases for the selected year.\nThe program can show moon phases for any year between 1902 to 2033.\nN - new moon.\nF - full moon.\n", getImage(), null);//GEN-BEGIN:|86-getter|1|86-postInit
             HelpYearList.setTimeout(Alert.FOREVER);//GEN-END:|86-getter|1|86-postInit
             // write post-init user code here
         }//GEN-BEGIN:|86-getter|2|
@@ -661,7 +660,7 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
     public Command getYearList() {
         if (YearList == null) {//GEN-END:|32-getter|0|32-preInit
             // write pre-init user code here
-            YearList = new Command("List", Command.SCREEN, 0);//GEN-LINE:|32-getter|1|32-postInit
+            YearList = new Command("List All Phases", Command.SCREEN, 0);//GEN-LINE:|32-getter|1|32-postInit
             // write post-init user code here
         }//GEN-BEGIN:|32-getter|2|
         return YearList;
