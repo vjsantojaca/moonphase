@@ -49,7 +49,7 @@
                 </Component>
                 <Component componentID="32" typeID="Cjavax.microedition.lcdui.Command">
                     <Property name="instanceName" typeID="Pjava.lang.String" value="VYearList"/>
-                    <Property name="label" typeID="Pjava.lang.String" value="VList"/>
+                    <Property name="label" typeID="Pjava.lang.String" value="VList All Phases"/>
                     <Property name="type" typeID="Pint" value="V1"/>
                     <Property name="priority" typeID="Pint" value="V0"/>
                 </Component>
@@ -114,14 +114,13 @@
                         <Property name="commands" typeID="1C#ItemCommandEventSource" value="A0:"/>
                         <Property name="itemCommandListener" typeID="C#ItemCommandListener" value="R17"/>
                         <Property name="date" typeID="Plong" value="Unew java.util.Date (System.currentTimeMillis ())"/>
-                        <Property name="inputMode" typeID="Pint" value="V1"/>
+                        <Property name="inputMode" typeID="Pint" value="V3"/>
                     </Component>
                     <Component componentID="55" typeID="Cjavax.microedition.lcdui.StringItem">
                         <Property name="instanceName" typeID="Pjava.lang.String" value="VphaseName_si"/>
                         <Property name="label" typeID="Pjava.lang.String" value="VCurrent phase:"/>
                         <Property name="layout" typeID="Pint" value="V768"/>
                         <Property name="commands" typeID="1C#ItemCommandEventSource" value="A1:4_R106"/>
-                        <Property name="defaultCommand" typeID="C#ItemCommandEventSource" value="R106"/>
                         <Property name="itemCommandListener" typeID="C#ItemCommandListener" value="R17"/>
                         <Property name="font" typeID="Cjavax.microedition.lcdui.Font" value="R81"/>
                         <Property name="appearanceMode" typeID="Pint" value="V0"/>
@@ -267,11 +266,11 @@
         </Component>
     </Document>
     <FlowScene version="1">
-        <Node componentID="2" descriptorID="componentNode2" x="19" y="14"/>
         <Node componentID="86" descriptorID="componentNode86" x="453" y="245"/>
-        <Node componentID="59" descriptorID="componentNode59" x="319" y="304"/>
-        <Node componentID="14" descriptorID="componentNode14" x="111" y="175"/>
         <Node componentID="44" descriptorID="componentNode44" x="283" y="11"/>
+        <Node componentID="14" descriptorID="componentNode14" x="111" y="175"/>
+        <Node componentID="59" descriptorID="componentNode59" x="319" y="304"/>
+        <Node componentID="2" descriptorID="componentNode2" x="19" y="14"/>
         <Node componentID="99" descriptorID="componentNode99" x="411" y="168"/>
     </FlowScene>
 </VisualDesign>
