@@ -1,14 +1,7 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- * TODO:
- * 1.Fix AM/PM time display problem. DONE
- * 2.Make phase description the main action on soft key (assign to Next, not Help).
- * 3.
- * 4.Edit main and phase text.  DONE1
- * 5.Fix floats. ???
- * 6.Fix PERCENT display & make it time aware.???
- * 7.Fix TIMEZONE difference. Check for day-light saving time (DLST)
+ * TODO: 1.Fix mismatched values for % and moon age
+ * TODO: 2. Add next full/new moon data.
+ * TODO: 3.Fix timezone DONE
  */
 package Moon;
 
@@ -32,9 +25,9 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
     private static final String[] explanations = {
         "New Moon\nThe first phase.\nSignifies birth and spring. Good time to start new projects, begin relationships and plant gardens. You might find yourself feeling impulsive.",
         "Waxing Crescent Moon\nThe second phase. \"Waxing\" is growing. Time of increased consciousness. Symbolizes the period when you become aware of your individuality. You realize you can struggle against the established pattern.",
-        "First Quarter Moon\nThe third phase. During this period you feel friction in the air - this is a movement toward solution. Time to start a fire - it will keep you warm and cook your food. Awareness is still moving toward understanding. It is the time to implement ideas and look at possible solutions.",
-        "Waxing Gibbous Moon\nThe fourth phase. Time for analysis and evaluation of our actions. We appraise our personal progress. This is more intellectual than the first quarter, which was more dynamic and intuitive.",
-        "Full Moon\nThe fifth phase. The Moon is on the opposite side of Earth from the Sun. Symbolizes the climax, and the time when you get answers. You see a lot of extremes.  If you see people acting like lunatics, but that is just your projection. Try to find balance. Otherwise you will either be blinded by the Sun, or won't even see it. It is the time when people go wild, but also time for romance. This period is also associated with fertilization and ovulation.",
+        "First Quarter Moon\nThe third phase.  The crisis time. During this period you feel friction in the air - this is a movement toward solution. If you act now, it might bring you dividents in the future. Awareness is still moving toward understanding. It is the time to implement ideas and look at possible solutions.",
+        "Waxing Gibbous Moon\nThe fourth phase. Time for analysis and evaluation of our actions. We appraise our personal progress.",
+        "Full Moon\nThe fifth phase. The Moon is on the opposite side of Earth from the Sun. Symbolizes the climax, and the time when you get answers. You see a lot of extremes. You may think that people are acting like lunatics, but that is just your projection. Try to find balance. Otherwise you will either be blinded by the Sun, or won't even see it. On Full Moon people go wild. It is also the time when they fall in love. This period is associated with fertilization and ovulation.",
         "Waning Gibbous Moon\nThe sixth phase. \"Waning\" means shrinking. When the Moon is waning, we see a little less of the Moon each day until it completely disappears.\nDuring this time we feel a strong desire to demonstrate to others what we have learned. Time to share the knowledge. The intellect is in charge.",
         "Last Quarter Moon\nThe eighth phase. Time to engage in conscious action. ",
         "Waning Crescent Moon\nThe ninth phase. Time to harvest to fruits of your Karma. You reap what you've sown. If you haven't learned the lessons, you can't move on. During this period you have no power to influence the outcome. You have already taken the steps that set up this outcome. It's a time to release the past."
@@ -49,22 +42,17 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
                                               "Waning gibbous",     // 5
                                               "Third quarter",      // 6
                                               "Waning crescent" };  // 7
-
-
     
 
     //<editor-fold defaultstate="collapsed" desc=" Generated Fields ">//GEN-BEGIN:|fields|0|
     private Command exitCommand;
     private Command helpCommand;
-    private Command Next;
     private Command YearList;
-    private Command backCommand;
-    private Command backCommand1;
     private Command exitCommand1;
     private Command helpMain1;
-    private Command DescribePhase;
-    private Command explainSelectedPhase;
-    private Command helpCommand2;
+    private Command describePhase;
+    private Command setCurrentTime;
+    private Command back;
     private Form mainForm1;
     private DateField dateField;
     private StringItem phaseName_si;
@@ -92,18 +80,7 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
 
     //<editor-fold defaultstate="collapsed" desc=" Generated Methods ">//GEN-BEGIN:|methods|0|
     //</editor-fold>//GEN-END:|methods|0|
-
-    //<editor-fold defaultstate="collapsed" desc=" Generated Method: initialize ">//GEN-BEGIN:|0-initialize|0|0-preInitialize
-    /**
-     * Initilizes the application.
-     * It is called only once when the MIDlet is started. The method is called before the <code>startMIDlet</code> method.
-     */
-    private void initialize() {//GEN-END:|0-initialize|0|0-preInitialize
-    // write pre-initialize user code here
-//GEN-LINE:|0-initialize|1|0-postInitialize
-    // write post-initialize user code here
-    }//GEN-BEGIN:|0-initialize|2|
-    //</editor-fold>//GEN-END:|0-initialize|2|
+ 
 
     //<editor-fold defaultstate="collapsed" desc=" Generated Method: startMIDlet ">//GEN-BEGIN:|3-startMIDlet|0|3-preAction
     /**
@@ -154,10 +131,10 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
      */
     public void commandAction(Command command, Displayable displayable) {//GEN-END:|7-commandAction|0|7-preCommandAction
         // write pre-action user code here
-        if (displayable == YearList1) {//GEN-BEGIN:|7-commandAction|1|70-preAction
-            if (command == backCommand1) {//GEN-END:|7-commandAction|1|70-preAction
+        if (displayable == YearList1) {//GEN-BEGIN:|7-commandAction|1|114-preAction
+            if (command == back) {//GEN-END:|7-commandAction|1|114-preAction
                 // write pre-action user code here
-                switchDisplayable(null, getMainForm1());//GEN-LINE:|7-commandAction|2|70-postAction
+                switchDisplayable(null, getMainForm1());//GEN-LINE:|7-commandAction|2|114-postAction
                 // write post-action user code here
             } else if (command == exitCommand1) {//GEN-LINE:|7-commandAction|3|68-preAction
                 // write pre-action user code here
@@ -173,30 +150,36 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
                 // write pre-action user code here
                 switchDisplayable(null, getYearList1());//GEN-LINE:|7-commandAction|8|62-postAction
                 // write post-action user code here
-            } else if (command == exitCommand) {//GEN-LINE:|7-commandAction|9|19-preAction
+            } else if (command == describePhase) {//GEN-LINE:|7-commandAction|9|101-preAction
                 // write pre-action user code here
-                exitMIDlet();//GEN-LINE:|7-commandAction|10|19-postAction
-            // write post-action user code here
-            } else if (command == explainSelectedPhase) {//GEN-LINE:|7-commandAction|11|101-preAction
-                // write pre-action user code here
-                switchDisplayable(null, getExplainPopup());//GEN-LINE:|7-commandAction|12|101-postAction
+                switchDisplayable(null, getExplainPopup());//GEN-LINE:|7-commandAction|10|101-postAction
                 explainPopup.setString(explanations[ _phaseIndex]);
+
                 // write post-action user code here
+            } else if (command == exitCommand) {//GEN-LINE:|7-commandAction|11|19-preAction
+                // write pre-action user code here
+                exitMIDlet();//GEN-LINE:|7-commandAction|12|19-postAction
+            // write post-action user code here
             } else if (command == helpCommand) {//GEN-LINE:|7-commandAction|13|58-preAction
                 // write pre-action user code here
                 switchDisplayable(null, getHelpMain());//GEN-LINE:|7-commandAction|14|58-postAction
                 // write post-action user code here
-            }//GEN-BEGIN:|7-commandAction|15|7-postCommandAction
-        }//GEN-END:|7-commandAction|15|7-postCommandAction
+            } else if (command == setCurrentTime) {//GEN-LINE:|7-commandAction|15|112-preAction
+
+                // write pre-action user code here
+                _calCurDate = Calendar.getInstance();
+                dateField.setDate(new java.util.Date(System.currentTimeMillis()));
+                itemStateChanged(dateField);
+
+//GEN-LINE:|7-commandAction|16|112-postAction
+                // write post-action user code here
+                
+                
+            }//GEN-BEGIN:|7-commandAction|17|7-postCommandAction
+        }//GEN-END:|7-commandAction|17|7-postCommandAction
     // write post-action user code here
-    }//GEN-BEGIN:|7-commandAction|16|
-    //</editor-fold>//GEN-END:|7-commandAction|16|
-
-
-
-
-
-
+    }//GEN-BEGIN:|7-commandAction|18|
+    //</editor-fold>//GEN-END:|7-commandAction|18|
 
     //<editor-fold defaultstate="collapsed" desc=" Generated Getter: exitCommand ">//GEN-BEGIN:|18-getter|0|18-preInit
     /**
@@ -206,7 +189,7 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
     public Command getExitCommand() {
         if (exitCommand == null) {//GEN-END:|18-getter|0|18-preInit
             // write pre-init user code here
-            exitCommand = new Command("Exit", Command.EXIT, -1);//GEN-LINE:|18-getter|1|18-postInit
+            exitCommand = new Command("Exit", Command.EXIT, 0);//GEN-LINE:|18-getter|1|18-postInit
         // write post-init user code here
         }//GEN-BEGIN:|18-getter|2|
         return exitCommand;
@@ -219,17 +202,18 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
      * @return the initialized component instance
      */
     public Form getMainForm1() {
-       // if (mainForm1 == null) {//GEN-END:|14-getter|0|14-preInit
+        if (mainForm1 == null) {//GEN-END:|14-getter|0|14-preInit
             // write pre-init user code here
             mainForm1 = new Form("Moon Phase", new Item[] { getImageItem(), getDateField(), getPhaseName_si(), getMoonAge_si() });//GEN-BEGIN:|14-getter|1|14-postInit
             mainForm1.addCommand(getExitCommand());
             mainForm1.addCommand(getHelpCommand());
             mainForm1.addCommand(getYearList());
-            mainForm1.addCommand(getExplainSelectedPhase());
+            mainForm1.addCommand(getDescribePhase());
+            mainForm1.addCommand(getSetCurrentTime());
             mainForm1.setCommandListener(this);//GEN-END:|14-getter|1|14-postInit
         // write post-init user code here
             mainForm1.setItemStateListener(this);
-      //  }//GEN-BEGIN:|14-getter|2|
+        }//GEN-BEGIN:|14-getter|2|
         return mainForm1;
     }
     //</editor-fold>//GEN-END:|14-getter|2|
@@ -238,37 +222,23 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
 
     //<editor-fold defaultstate="collapsed" desc=" Generated Method: commandAction for Items ">//GEN-BEGIN:|17-itemCommandAction|0|17-preItemCommandAction
     /**
-     * Called by a system to indicated that a command has been invoked on a particular item.
+     * Called by a system to indicate that a command has been invoked on a particular item.
      * @param command the Command that was invoked
-     * @param displayable the Item where the command was invoked
+     * @param item the Item where the command was invoked
      */
     public void commandAction(Command command, Item item) {//GEN-END:|17-itemCommandAction|0|17-preItemCommandAction
         // write pre-action user code here
-        if (item == phaseName_si) {//GEN-BEGIN:|17-itemCommandAction|1|106-preAction
-            if (command == DescribePhase) {//GEN-END:|17-itemCommandAction|1|106-preAction
+        if (item == stringItemListYear) {//GEN-BEGIN:|17-itemCommandAction|1|47-preAction
+            if (command == back) {//GEN-END:|17-itemCommandAction|1|47-preAction
                 // write pre-action user code here
-//GEN-LINE:|17-itemCommandAction|2|106-postAction
+                switchDisplayable(null, getMainForm1());//GEN-LINE:|17-itemCommandAction|2|47-postAction
                 // write post-action user code here
-            }//GEN-BEGIN:|17-itemCommandAction|3|47-preAction
-        } else if (item == stringItemListYear) {
-            if (command == backCommand) {//GEN-END:|17-itemCommandAction|3|47-preAction
-                // write pre-action user code here
-                switchDisplayable(null, getMainForm1());//GEN-LINE:|17-itemCommandAction|4|47-postAction
-                // write post-action user code here
-            }//GEN-BEGIN:|17-itemCommandAction|5|17-postItemCommandAction
-        }//GEN-END:|17-itemCommandAction|5|17-postItemCommandAction
+            }//GEN-BEGIN:|17-itemCommandAction|3|17-postItemCommandAction
+        }//GEN-END:|17-itemCommandAction|3|17-postItemCommandAction
         // write post-action user code here
 
-    }//GEN-BEGIN:|17-itemCommandAction|6|
-    //</editor-fold>//GEN-END:|17-itemCommandAction|6|
-
-
-
-
-
-
-
-
+    }//GEN-BEGIN:|17-itemCommandAction|4|113-postAction
+    //</editor-fold>//GEN-END:|17-itemCommandAction|4|113-postAction
 
     //<editor-fold defaultstate="collapsed" desc=" Generated Getter: helpCommand ">//GEN-BEGIN:|22-getter|0|22-preInit
     /**
@@ -324,54 +294,17 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
     }
     
 
-
-    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: Next ">//GEN-BEGIN:|31-getter|0|31-preInit
-    /**
-     * Returns an initiliazed instance of Next component.
-     * @return the initialized component instance
-     */
-    public Command getNext() {
-        if (Next == null) {//GEN-END:|31-getter|0|31-preInit
-            // write pre-init user code here
-            Next = new Command("All Phases", "List all phases", Command.ITEM, 0);//GEN-LINE:|31-getter|1|31-postInit
-            // write post-init user code here
-        }//GEN-BEGIN:|31-getter|2|
-        return Next;
-    }
-    //</editor-fold>//GEN-END:|31-getter|2|
-
-
-    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: backCommand ">//GEN-BEGIN:|38-getter|0|38-preInit
-    /**
-     * Returns an initiliazed instance of backCommand component.
-     * @return the initialized component instance
-     */
-    public Command getBackCommand() {
-        if (backCommand == null) {//GEN-END:|38-getter|0|38-preInit
-            // write pre-init user code here
-            backCommand = new Command("Back", Command.BACK, 0);//GEN-LINE:|38-getter|1|38-postInit
-            // write post-init user code here
-        }//GEN-BEGIN:|38-getter|2|
-        return backCommand;
-    }
-    //</editor-fold>//GEN-END:|38-getter|2|
-
-
-
-
-
     //<editor-fold defaultstate="collapsed" desc=" Generated Getter: stringItemListYear ">//GEN-BEGIN:|46-getter|0|46-preInit
     /**
      * Returns an initiliazed instance of stringItemListYear component.
      * @return the initialized component instance
      */
     public StringItem getStringItemListYear() {
-        //if (stringItemListYear == null) {//GEN-END:|46-getter|0|46-preInit
+//        if (stringItemListYear == null) {//GEN-END:|46-getter|0|46-preInit
 		//        if (stringItemListYear == null) {
             // write pre-init user code here
             // SKIP_CHECK for null
             stringItemListYear = new StringItem(null, null, Item.PLAIN);//GEN-BEGIN:|46-getter|1|46-postInit
-            stringItemListYear.addCommand(getBackCommand());
             stringItemListYear.setItemCommandListener(this);
             stringItemListYear.setLayout(ImageItem.LAYOUT_DEFAULT);
             stringItemListYear.setFont(getFont());//GEN-END:|46-getter|1|46-postInit
@@ -382,7 +315,7 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
             stringItemListYear.setText(_yearList);
             // write post-init user code here
         ///}
-       // }//GEN-BEGIN:|46-getter|2|
+//        }//GEN-BEGIN:|46-getter|2|
         return stringItemListYear;
     }
     //</editor-fold>//GEN-END:|46-getter|2|
@@ -412,9 +345,8 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
         if (phaseName_si == null) {//GEN-END:|55-getter|0|55-preInit
             // write pre-init user code here
             phaseName_si = new StringItem("Current phase:", null, Item.PLAIN);//GEN-BEGIN:|55-getter|1|55-postInit
-            phaseName_si.addCommand(getDescribePhase());
             phaseName_si.setItemCommandListener(this);
-            phaseName_si.setLayout(ImageItem.LAYOUT_DEFAULT | ImageItem.LAYOUT_NEWLINE_BEFORE | ImageItem.LAYOUT_NEWLINE_AFTER);
+            phaseName_si.setLayout(ImageItem.LAYOUT_NEWLINE_BEFORE | ImageItem.LAYOUT_NEWLINE_AFTER);
             phaseName_si.setFont(getFont1());//GEN-END:|55-getter|1|55-postInit
             
             phaseName_si.setText(calcMoonPhaseName());
@@ -448,53 +380,22 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
      * @return the initialized component instance
      */
     public Form getYearList1() {
-        //if (YearList1 == null) {//GEN-END:|44-getter|0|44-preInit
+//        if (YearList1 == null) {//GEN-END:|44-getter|0|44-preInit
             // write pre-init user code here
             // SKIP_CHECK for null #2
             YearList1 = new Form("", new Item[] { getStringItemListYear() });//GEN-BEGIN:|44-getter|1|44-postInit
             YearList1.addCommand(getExitCommand1());
-            YearList1.addCommand(getBackCommand1());
             YearList1.addCommand(getHelpMain1());
+            YearList1.addCommand(getBack());
             YearList1.setCommandListener(this);//GEN-END:|44-getter|1|44-postInit
             YearList1.setTitle( "" +_calCurDate.get(Calendar.YEAR));
             // write post-init user code here
             // SKIP_CHECK for null #2
 
-       // }//GEN-BEGIN:|44-getter|2|
+  //      }//GEN-BEGIN:|44-getter|2|
         return YearList1;
     }
     //</editor-fold>//GEN-END:|44-getter|2|
-
-    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: exitCommand1 ">//GEN-BEGIN:|67-getter|0|67-preInit
-    /**
-     * Returns an initiliazed instance of exitCommand1 component.
-     * @return the initialized component instance
-     */
-    public Command getExitCommand1() {
-        if (exitCommand1 == null) {//GEN-END:|67-getter|0|67-preInit
-            // write pre-init user code here
-            exitCommand1 = new Command("Exit", Command.EXIT, 0);//GEN-LINE:|67-getter|1|67-postInit
-            // write post-init user code here
-        }//GEN-BEGIN:|67-getter|2|
-        return exitCommand1;
-    }
-    //</editor-fold>//GEN-END:|67-getter|2|
-
-    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: backCommand1 ">//GEN-BEGIN:|69-getter|0|69-preInit
-    /**
-     * Returns an initiliazed instance of backCommand1 component.
-     * @return the initialized component instance
-     */
-    public Command getBackCommand1() {
-        if (backCommand1 == null) {//GEN-END:|69-getter|0|69-preInit
-            // write pre-init user code here
-            backCommand1 = new Command("Back", Command.BACK, 0);//GEN-LINE:|69-getter|1|69-postInit
-            // write post-init user code here
-        }//GEN-BEGIN:|69-getter|2|
-        return backCommand1;
-    }
-    //</editor-fold>//GEN-END:|69-getter|2|
-
 
 
     //<editor-fold defaultstate="collapsed" desc=" Generated Getter: font1 ">//GEN-BEGIN:|81-getter|0|81-preInit
@@ -537,7 +438,7 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
     public Alert getHelpYearList() {
         if (HelpYearList == null) {//GEN-END:|86-getter|0|86-preInit
             // write pre-init user code here
-            HelpYearList = new Alert("New/Full Moon List", "The dates for new/full moon phases for the selected year.\nThe program can show moon phases for any year between 1902 to 2033.\nN - new moon.\nF - full moon.\n", getImage(), null);//GEN-BEGIN:|86-getter|1|86-postInit
+            HelpYearList = new Alert("New/Full Moon List", "The dates for new/full moon phases for the selected year.\nThe program shows moon phases for any year between 1902 to 2033.\nN - new moon.\nF - full moon.\n(+2) - UTC time zone difference", getImage(), null);//GEN-BEGIN:|86-getter|1|86-postInit
             HelpYearList.setTimeout(Alert.FOREVER);//GEN-END:|86-getter|1|86-postInit
             // write post-init user code here
         }//GEN-BEGIN:|86-getter|2|
@@ -554,7 +455,7 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
         if (image == null) {//GEN-END:|90-getter|0|90-preInit
             // write pre-init user code here
             try {//GEN-BEGIN:|90-getter|1|90-@java.io.IOException
-                image = Image.createImage("/help1.png");
+                image = Image.createImage("/res/help1.png");
             } catch (java.io.IOException e) {//GEN-END:|90-getter|1|90-@java.io.IOException
                 e.printStackTrace();
             }//GEN-LINE:|90-getter|2|90-postInit
@@ -583,25 +484,25 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
 
     public void setPhaseImage(int imageIndex){
         try {
-            imageItem.setImage(Image.createImage("/" + Integer.toString(imageIndex) + ".png"));
+            imageItem.setImage(Image.createImage("/res/" + Integer.toString(imageIndex) + ".png"));
         } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
     
 
-    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: explainSelectedPhase ">//GEN-BEGIN:|100-getter|0|100-preInit
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: describePhase ">//GEN-BEGIN:|100-getter|0|100-preInit
     /**
-     * Returns an initiliazed instance of explainSelectedPhase component.
+     * Returns an initiliazed instance of describePhase component.
      * @return the initialized component instance
      */
-    public Command getExplainSelectedPhase() {
-        if (explainSelectedPhase == null) {//GEN-END:|100-getter|0|100-preInit
+    public Command getDescribePhase() {
+        if (describePhase == null) {//GEN-END:|100-getter|0|100-preInit
             // write pre-init user code here
-            explainSelectedPhase = new Command("Explain", "Describe phase", Command.OK, -2);//GEN-LINE:|100-getter|1|100-postInit
+            describePhase = new Command("Explain", Command.OK, -2);//GEN-LINE:|100-getter|1|100-postInit
             // write post-init user code here
         }//GEN-BEGIN:|100-getter|2|
-        return explainSelectedPhase;
+        return describePhase;
     }
     //</editor-fold>//GEN-END:|100-getter|2|
 
@@ -622,35 +523,9 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
     }
     //</editor-fold>//GEN-END:|99-getter|2|
 
-    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: DescribePhase ">//GEN-BEGIN:|103-getter|0|103-preInit
-    /**
-     * Returns an initiliazed instance of DescribePhase component.
-     * @return the initialized component instance
-     */
-    public Command getDescribePhase() {
-        if (DescribePhase == null) {//GEN-END:|103-getter|0|103-preInit
-            // write pre-init user code here
-            DescribePhase = new Command("Descrobe", "Describe Phase", Command.HELP, 0);//GEN-LINE:|103-getter|1|103-postInit
-            // write post-init user code here
-        }//GEN-BEGIN:|103-getter|2|
-        return DescribePhase;
-    }
-    //</editor-fold>//GEN-END:|103-getter|2|
 
-    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: helpCommand2 ">//GEN-BEGIN:|105-getter|0|105-preInit
-    /**
-     * Returns an initiliazed instance of helpCommand2 component.
-     * @return the initialized component instance
-     */
-    public Command getHelpCommand2() {
-        if (helpCommand2 == null) {//GEN-END:|105-getter|0|105-preInit
-            // write pre-init user code here
-            helpCommand2 = new Command("Help", Command.HELP, 0);//GEN-LINE:|105-getter|1|105-postInit
-            // write post-init user code here
-        }//GEN-BEGIN:|105-getter|2|
-        return helpCommand2;
-    }
-    //</editor-fold>//GEN-END:|105-getter|2|
+
+
 
     //<editor-fold defaultstate="collapsed" desc=" Generated Getter: YearList ">//GEN-BEGIN:|32-getter|0|32-preInit
     /**
@@ -660,7 +535,7 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
     public Command getYearList() {
         if (YearList == null) {//GEN-END:|32-getter|0|32-preInit
             // write pre-init user code here
-            YearList = new Command("List All Phases", Command.SCREEN, 0);//GEN-LINE:|32-getter|1|32-postInit
+            YearList = new Command("Show All", Command.SCREEN, 0);//GEN-LINE:|32-getter|1|32-postInit
             // write post-init user code here
         }//GEN-BEGIN:|32-getter|2|
         return YearList;
@@ -676,6 +551,7 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
         if (moonAge_si == null) {//GEN-END:|107-getter|0|107-preInit
             // write pre-init user code here
             moonAge_si = new StringItem("Moon Age:", null);//GEN-BEGIN:|107-getter|1|107-postInit
+            moonAge_si.setItemCommandListener(this);
             moonAge_si.setFont(getFont1());//GEN-END:|107-getter|1|107-postInit
             // write post-init user code here
             
@@ -685,6 +561,56 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
         return moonAge_si;
     }
     //</editor-fold>//GEN-END:|107-getter|2|
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: setCurrentTime ">//GEN-BEGIN:|111-getter|0|111-preInit
+    /**
+     * Returns an initiliazed instance of setCurrentTime component.
+     * @return the initialized component instance
+     */
+    public Command getSetCurrentTime() {
+        if (setCurrentTime == null) {//GEN-END:|111-getter|0|111-preInit
+            // write pre-init user code here
+            setCurrentTime = new Command("Now", Command.ITEM, 0);//GEN-LINE:|111-getter|1|111-postInit
+            // write post-init user code here
+        }//GEN-BEGIN:|111-getter|2|
+        return setCurrentTime;
+    }
+    //</editor-fold>//GEN-END:|111-getter|2|
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: exitCommand1 ">//GEN-BEGIN:|67-getter|0|67-preInit
+    /**
+     * Returns an initiliazed instance of exitCommand1 component.
+     * @return the initialized component instance
+     */
+    public Command getExitCommand1() {
+        if (exitCommand1 == null) {//GEN-END:|67-getter|0|67-preInit
+            // write pre-init user code here
+            exitCommand1 = new Command("Exit", Command.EXIT, 0);//GEN-LINE:|67-getter|1|67-postInit
+            // write post-init user code here
+        }//GEN-BEGIN:|67-getter|2|
+        return exitCommand1;
+    }
+    //</editor-fold>//GEN-END:|67-getter|2|
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: back ">//GEN-BEGIN:|113-getter|0|113-preInit
+    /**
+     * Returns an initiliazed instance of back component.
+     * @return the initialized component instance
+     */
+    public Command getBack() {
+        if (back == null) {//GEN-END:|113-getter|0|113-preInit
+            // write pre-init user code here
+            back = new Command("Back", Command.BACK, 0);//GEN-LINE:|113-getter|1|113-postInit
+            // write post-init user code here
+        }//GEN-BEGIN:|113-getter|2|
+        return back;
+    }
+    //</editor-fold>//GEN-END:|113-getter|2|
+
+
+
+
+
     /**
      * Returns a display instance.
      * @return the display instance.
@@ -710,7 +636,7 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
         if (midletPaused) {
             resumeMIDlet();
         } else {
-            initialize();
+           // initialize();
             startMIDlet();
         }
         midletPaused = false;
@@ -733,28 +659,12 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
     {
         if (item == dateField)
         {
-//            
-//           Calendar cal = Calendar.getInstance();
-//           //cal.setTimeZone(TimeZone.getDefault());
-//           
-//           
-//           cal.setTime );
-//           
-//           MoonPhase _mp = new MoonPhase(cal);
-//                      
-//           String phaseName =  _mp.toString(cal);
-           
             _calCurDate.setTime(dateField.getDate());
-            
-            //_mp = new MoonPhase(_calCurDate); change to _mp.update();
-            //_mp = new MoonPhase(_calCurDate);
             _mp.updateCal(_calCurDate);
             _phase = _mp.getPhase();
             _phaseIndex = _mp.getPhaseIndex();
-            
             phaseName_si.setText(calcMoonPhaseName());
             moonAge_si.setText(calcMoonAgeData());
-            //stringItem1.setText("\nAll phases for " +_calCurDate.get(Calendar.YEAR));
             setPhaseImage(_phaseIndex);
         }
     }
