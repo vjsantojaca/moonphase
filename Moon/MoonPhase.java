@@ -47,8 +47,6 @@ public class MoonPhase {
     private double _JD;
     private double _phase;
     private static double _moonAgeAsDays;
-    private static double _moon_age;
-    
 
 
     public MoonPhase(){
@@ -326,11 +324,8 @@ public class MoonPhase {
         moon_present_longitude = moon_corrected_longitude + moon_variation;
         moon_present_age = moon_present_longitude - sun_geocentric_elong;
         moon_present_phase = 100.0 * ((1.0 - Math.cos(TORAD(moon_present_age))) / 2.0);
-        
-        _moon_age = moon_present_age;
-        
-        
-        if (FIXANGLE(moon_present_age) - 180.0 > 0.0) {
+
+        if (0.0 < FIXANGLE(moon_present_age) - 180.0) {
             moon_present_phase = -moon_present_phase;
         }
 
@@ -342,7 +337,9 @@ public class MoonPhase {
 /**  UCTTOJ  --  Convert GMT date and time to astronomical
                 Julian time (i.e. Julian date plus day fraction,
                 expressed as a double).
- Converted to Java from original source MOONCALC.C in moontool http://www.fourmilab.ch/moontoolw/moont16s.zip 
+ @param cal Calendar object
+ @return JD Julian date as float number
+ <p>Converted to Java from original source MOONCALC.C in moontool http://www.fourmilab.ch/moontoolw/moont16s.zip</p>
  */
 
     public static double  calendarToJD_2(Calendar cal) {
