@@ -1,41 +1,47 @@
-/*
- * Generates a list of new and full moon dates for the current year.
- */
-
 package Moon;
 
 /**
- *
+ * Generates a list of new and full moon dates for the current year.
  * @author xh
+ * from Stellafane Moon Phase Calculator for http://www.Stellafane.com 1999-Apr-24 KHS Created by Ken Slater
+ * Generates a list of new and full moon dates for the current year.
+ * converted from JavaScript code found at http://stellafane.org/observing/moon_phase.html
  */
 //import static java.lang.Math.*;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.lang.Math;
+//import java.lang.Math;
 
 //import java.text.DateFormat;
 import java.util.TimeZone;
 
-/**
- * from Stellafane Moon Phase Calculator for http://www.Stellafane.com 1999-Apr-24 KHS Created by Ken Slater
- * User: xh
- * Date: Feb 23, 2008
- * Time: 2:36:30 AM
- * Generates a list of new and full moon dates for the current year.
- * converted from JavaScript code found at http://stellafane.org/observing/moon_phase.html
- * STATUS: completed
- * @noinspection ConstantConditions
- */
 public class PhaseList {
 
-    /*
+    /**
      * Emulates BASIC's floor Funtion
      */
     public static double meFloor(double n) {
         return Math.floor(n);
     }
 
+    /**
+     * Converts a TDT Calendar value to a UTC calendar
+     * 
+     * <p>TDT is a uniform time used for astronomical 
+     * calculations.</p>
+     * <p>Civil time, such as UTC (popularly known as GMT, 
+     * but technically incorrect) or your local time, 
+     * is corrected for the non-linear changes in the 
+     * rotation of the earth. This is done accurately only 
+     * through observations. This routine corrects the the 
+     * calculated TDT to civil time using a table of observations 
+     * from 1620 thru 2002. Time corrections outside this range 
+     * are estimated from predictive equations. </p>
+     * <p>Be aware that for times hundreds of years in the past or 
+     * future, the difference between TDT and UTC can be many 
+     * hours. See Meeus' book for additional details.</p>
+     */
     private static Calendar TDTtoUTC(Calendar tCal) {
 
         // Correction lookup table has entry for every even year between TBLfirst and TBLlast
@@ -74,7 +80,6 @@ public class PhaseList {
             }
         } else {
             throw new NumberFormatException();
-
             //System.out.println("Error: TDT to UTC correction not computed");
         }
 
@@ -82,14 +87,15 @@ public class PhaseList {
         Date date = tCal.getTime();
 
         long adjustedDate = date.getTime() - ((long) (deltaT * 1000));
-
         Calendar calRes = Calendar.getInstance();
-
         calRes.setTime(new Date(adjustedDate));
-
         return calRes;
     } // End TDTtoUTC
 
+    /** Gets Julian Date as a double value and returns
+     * a UTC Calendar object
+     * @param jd Julian Date
+     */
     private static Calendar JDtoUTC2(double jd) {
         int z;
         double f;
@@ -111,16 +117,19 @@ public class PhaseList {
         d = (int) (c * 365.25);
         e = (int) ((b - d) / 30.6001);
 
-        if (e < 14)
+        if (e < 14) {
             mm = e - 1;
-        else
+        }
+        else {
             mm = e - 13;
+        }
 
-
-        if (mm > 2)
+        if (mm > 2) {
             yy = c - 4716;
-        else
+        }
+        else {
             yy = c - 4715;
+        }
 
         dd = b - d - (int) (30.6001 * e) + f;
 
@@ -139,14 +148,19 @@ public class PhaseList {
     }
 
 
-    private static final String WEEK_DAYS[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+    private static final String WEEK_DAYS[] = {"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"};
 
     private static final String MONTH_NAMES[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
-    //private static final String AM_PM_CODE[] = {"AM", "PM"};
-
-    public static String moonPhaseListYear(int year) {
-        //Converted from Basic by Roger W. Sinnot, Sky & Telescope, March 1985.
+    /**
+     * Returns a string containing the date and time of all 
+     * new and full moon phases for a given <code>year</code> 
+     * @param year 
+     * @param prefs contains time-zone settings @see Prefs
+     * <p>Converted from Basic by Roger W. Sinnot, Sky & Telescope, March 1985.</p>
+     */
+    public static String moonPhaseListYear(int year, Prefs prefs) {
+        
         double R1 = Math.PI / 180;
         boolean U = false;
         double K0, T, T2, T3, J0, F0, J, F, M0, M1, B1, K9, K, M5, M6, B6;
@@ -200,26 +214,35 @@ public class PhaseList {
 
             String newOrFull;
             newOrFull = U ? "N " : "F ";
-
+            
+            long tzOffsetMillis =0;
             /* skip previous/next year*/
             if (year != UTC.get(Calendar.YEAR)) {
                 continue;
             }
 
-
-            /* adjust local time zone display*/
-            TimeZone tz = TimeZone.getDefault();
-//            TimeZone tz = UTC.getTimeZone();
-//            int tzOffset = tz. getRawOffset() / (1000 * 60*60);
-            long tzOffsetMillis = tz.getOffset(
-                    1, //era AD
-                    UTC.get(Calendar.YEAR),
-                    UTC.get(Calendar.MONTH),
-                    UTC.get(Calendar.DAY_OF_MONTH),
-                    UTC.get(Calendar.DAY_OF_WEEK),
-                    0
-            );
-
+            if (prefs.autoTimeZone){
+                /* adjust local time zone display*/
+                TimeZone tz = TimeZone.getDefault();
+    //            TimeZone tz = UTC.getTimeZone();
+    //            int tzOffset = tz. getRawOffset() / (1000 * 60*60);
+                tzOffsetMillis = tz.getOffset(
+                        1, //era AD
+                        UTC.get(Calendar.YEAR),
+                        UTC.get(Calendar.MONTH),
+                        UTC.get(Calendar.DAY_OF_MONTH),
+                        UTC.get(Calendar.DAY_OF_WEEK),
+                        0
+                );
+            } else{
+                tzOffsetMillis = prefs.timeZoneOffset * 1000 * 60*60;
+                if (prefs.useDayLightSaving 
+                        && UTC.get(Calendar.MONTH)> Calendar.MARCH
+                        && UTC.get(Calendar.MONTH)<  Calendar.NOVEMBER) {
+                    // add 1 hour manual time zone correction
+                    tzOffsetMillis += 1000 * 60 * 60;
+                }
+            }
             //UTC.setTimeZone(new TimeZone());
             //UTC.set(Calendar.HOUR_OF_DAY, UTC.get(Calendar.HOUR_OF_DAY) + tzOffset);
             long currTime = UTC.getTime().getTime();
@@ -252,9 +275,10 @@ public class PhaseList {
         return strbuf.toString(); ///////////////
     } //End MoonPhase
 
-    public static void main(String args[]) {
-        //Calendar calPhase = ;
-        System.out.println(moonPhaseListYear(2008));
-    }
+//    public static void main(String args[]) {
+//        //Calendar calPhase = ;
+//        Prefs pfs = new Prefs();
+//        System.out.println(moonPhaseListYear(2008,pfs));
+//    }
 }
 
