@@ -22,6 +22,7 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
     private MoonPhase _mp;
     private double _phase;
     private int _phaseIndex = 0;
+    private Prefs _prefs;
     private static final String[] explanations = {
         "New Moon\nThe first phase.\nSignifies birth and spring. Good time to start new projects, begin relationships and plant gardens. You might find yourself feeling impulsive.",
         "Waxing Crescent Moon\nThe second phase. \"Waxing\" is growing. Time of increased consciousness. Symbolizes the period when you become aware of your individuality. You realize you can struggle against the established pattern.",
@@ -52,7 +53,10 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
     private Command helpMain1;
     private Command describePhase;
     private Command setCurrentTime;
+    private Command options;
     private Command back;
+    private Command savePrefs;
+    private Command backCommand;
     private Form mainForm1;
     private DateField dateField;
     private StringItem phaseName_si;
@@ -63,6 +67,10 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
     private Alert HelpMain;
     private Alert HelpYearList;
     private Alert explainPopup;
+    private Form frmPrefs;
+    private TextField txtUtcOffset;
+    private ChoiceGroup dayLightSaving;
+    private ChoiceGroup timeZoneMode;
     private Font font;
     private Font font1;
     private Image image;
@@ -75,6 +83,7 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
         _mp = new MoonPhase(_calCurDate);
         _phase = _mp.getPhase();
         _phaseIndex = _mp.getPhaseIndex();
+        _prefs = new Prefs();
     }
     
 
@@ -145,41 +154,75 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
                 switchDisplayable(null, getHelpYearList());//GEN-LINE:|7-commandAction|6|85-postAction
                 // write post-action user code here
             }//GEN-BEGIN:|7-commandAction|7|62-preAction
-        } else if (displayable == mainForm1) {
-            if (command == YearList) {//GEN-END:|7-commandAction|7|62-preAction
+        } else if (displayable == frmPrefs) {
+            if (command == backCommand) {//GEN-END:|7-commandAction|7|62-preAction
                 // write pre-action user code here
-                switchDisplayable(null, getYearList1());//GEN-LINE:|7-commandAction|8|62-postAction
+                switchDisplayable(null, getMainForm1());//GEN-LINE:|7-commandAction|8|62-postAction
                 // write post-action user code here
-            } else if (command == describePhase) {//GEN-LINE:|7-commandAction|9|101-preAction
+            } else if (command == savePrefs) {//GEN-LINE:|7-commandAction|9|101-preAction
                 // write pre-action user code here
-                switchDisplayable(null, getExplainPopup());//GEN-LINE:|7-commandAction|10|101-postAction
+                ////////update.PREFS
+                boolean hasChanged = false;
+                if (txtUtcOffset.size() ==0){
+                    txtUtcOffset.setString("0");
+                }
+                if (_prefs.autoTimeZone != timeZoneMode.isSelected(0)){
+                    _prefs.autoTimeZone = timeZoneMode.isSelected(0);
+                    hasChanged = true;
+                }
+                if (_prefs.timeZoneOffset != Short.parseShort(txtUtcOffset.getString())){
+                    _prefs.timeZoneOffset = Short.parseShort(txtUtcOffset.getString());
+                    hasChanged = true;
+                }
+                if (_prefs.useDayLightSaving != dayLightSaving.isSelected(0)){
+                    _prefs.useDayLightSaving = dayLightSaving.isSelected(0);
+                    hasChanged = true;
+                }
+                if (hasChanged) {
+                    _prefs.Save();
+                }
+                switchDisplayable(null, getMainForm1());//GEN-LINE:|7-commandAction|10|101-postAction
+                // write post-action user code here
+            }//GEN-BEGIN:|7-commandAction|11|19-preAction
+        } else if (displayable == mainForm1) {
+            if (command == YearList) {//GEN-END:|7-commandAction|11|19-preAction
+                // write pre-action user code here
+                switchDisplayable(null, getYearList1());//GEN-LINE:|7-commandAction|12|19-postAction
+                // write post-action user code here
+            } else if (command == describePhase) {//GEN-LINE:|7-commandAction|13|58-preAction
+                // write pre-action user code here
+                switchDisplayable(null, getExplainPopup());//GEN-LINE:|7-commandAction|14|58-postAction
                 explainPopup.setString(explanations[ _phaseIndex]);
 
                 // write post-action user code here
-            } else if (command == exitCommand) {//GEN-LINE:|7-commandAction|11|19-preAction
+            } else if (command == exitCommand) {//GEN-LINE:|7-commandAction|15|119-preAction
                 // write pre-action user code here
-                exitMIDlet();//GEN-LINE:|7-commandAction|12|19-postAction
+                exitMIDlet();//GEN-LINE:|7-commandAction|16|119-postAction
             // write post-action user code here
-            } else if (command == helpCommand) {//GEN-LINE:|7-commandAction|13|58-preAction
+            } else if (command == helpCommand) {//GEN-LINE:|7-commandAction|17|112-preAction
                 // write pre-action user code here
-                switchDisplayable(null, getHelpMain());//GEN-LINE:|7-commandAction|14|58-postAction
+                switchDisplayable(null, getHelpMain());//GEN-LINE:|7-commandAction|18|112-postAction
                 // write post-action user code here
-            } else if (command == setCurrentTime) {//GEN-LINE:|7-commandAction|15|112-preAction
+            } else if (command == options) {//GEN-LINE:|7-commandAction|19|122-preAction
+                // write pre-action user code here
+                switchDisplayable(null, getFrmPrefs());//GEN-LINE:|7-commandAction|20|122-postAction
+                // write post-action user code here
+            } else if (command == setCurrentTime) {//GEN-LINE:|7-commandAction|21|125-preAction
 
                 // write pre-action user code here
                 _calCurDate = Calendar.getInstance();
                 dateField.setDate(new java.util.Date(System.currentTimeMillis()));
                 itemStateChanged(dateField);
 
-//GEN-LINE:|7-commandAction|16|112-postAction
+//GEN-LINE:|7-commandAction|22|125-postAction
                 // write post-action user code here
                 
                 
-            }//GEN-BEGIN:|7-commandAction|17|7-postCommandAction
-        }//GEN-END:|7-commandAction|17|7-postCommandAction
+            }//GEN-BEGIN:|7-commandAction|23|7-postCommandAction
+        }//GEN-END:|7-commandAction|23|7-postCommandAction
     // write post-action user code here
-    }//GEN-BEGIN:|7-commandAction|18|
-    //</editor-fold>//GEN-END:|7-commandAction|18|
+    }//GEN-BEGIN:|7-commandAction|24|
+    //</editor-fold>//GEN-END:|7-commandAction|24|
 
     //<editor-fold defaultstate="collapsed" desc=" Generated Getter: exitCommand ">//GEN-BEGIN:|18-getter|0|18-preInit
     /**
@@ -205,11 +248,12 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
         if (mainForm1 == null) {//GEN-END:|14-getter|0|14-preInit
             // write pre-init user code here
             mainForm1 = new Form("Moon Phase", new Item[] { getImageItem(), getDateField(), getPhaseName_si(), getMoonAge_si() });//GEN-BEGIN:|14-getter|1|14-postInit
-            mainForm1.addCommand(getExitCommand());
-            mainForm1.addCommand(getHelpCommand());
             mainForm1.addCommand(getYearList());
             mainForm1.addCommand(getDescribePhase());
             mainForm1.addCommand(getSetCurrentTime());
+            mainForm1.addCommand(getHelpCommand());
+            mainForm1.addCommand(getOptions());
+            mainForm1.addCommand(getExitCommand());
             mainForm1.setCommandListener(this);//GEN-END:|14-getter|1|14-postInit
         // write post-init user code here
             mainForm1.setItemStateListener(this);
@@ -220,25 +264,9 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
 
 
 
-    //<editor-fold defaultstate="collapsed" desc=" Generated Method: commandAction for Items ">//GEN-BEGIN:|17-itemCommandAction|0|17-preItemCommandAction
-    /**
-     * Called by a system to indicate that a command has been invoked on a particular item.
-     * @param command the Command that was invoked
-     * @param item the Item where the command was invoked
-     */
-    public void commandAction(Command command, Item item) {//GEN-END:|17-itemCommandAction|0|17-preItemCommandAction
-        // write pre-action user code here
-        if (item == stringItemListYear) {//GEN-BEGIN:|17-itemCommandAction|1|47-preAction
-            if (command == back) {//GEN-END:|17-itemCommandAction|1|47-preAction
-                // write pre-action user code here
-                switchDisplayable(null, getMainForm1());//GEN-LINE:|17-itemCommandAction|2|47-postAction
-                // write post-action user code here
-            }//GEN-BEGIN:|17-itemCommandAction|3|17-postItemCommandAction
-        }//GEN-END:|17-itemCommandAction|3|17-postItemCommandAction
-        // write post-action user code here
 
-    }//GEN-BEGIN:|17-itemCommandAction|4|113-postAction
-    //</editor-fold>//GEN-END:|17-itemCommandAction|4|113-postAction
+        // write post-action user code here
+    //}
 
     //<editor-fold defaultstate="collapsed" desc=" Generated Getter: helpCommand ">//GEN-BEGIN:|22-getter|0|22-preInit
     /**
@@ -272,12 +300,13 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
             dateField.setDate(new java.util.Date(System.currentTimeMillis()));//GEN-END:|28-getter|1|28-postInit
             // write post-init user code here
 //            dateField.setItemCommandListener(new ItemCommandListener() {
-//
+
+            //
 //                public void commandAction(Command arg0, Item arg1) {
 //                    throw new UnsupportedOperationException("Not supported yet.");
 //                }
 //            });
-            
+
             
         }//GEN-BEGIN:|28-getter|2|
         return dateField;
@@ -294,13 +323,12 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
     }
     
 
-    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: stringItemListYear ">//GEN-BEGIN:|46-getter|0|46-preInit
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: stringItemListYear ">                                   
     /**
      * Returns an initiliazed instance of stringItemListYear component.
      * @return the initialized component instance
      */
     public StringItem getStringItemListYear() {
-//        if (stringItemListYear == null) {//GEN-END:|46-getter|0|46-preInit
 		//        if (stringItemListYear == null) {
             // write pre-init user code here
             // SKIP_CHECK for null
@@ -311,14 +339,13 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
             // SKIP_CHECK for null
             //String phasesListYear = PhaseList.moonPhase(2008).getTime();
             //Calendar cal = getDateFieldValue();
-            _yearList = PhaseList.moonPhaseListYear(_calCurDate.get(Calendar.YEAR));
+            _yearList = PhaseList.moonPhaseListYear(_calCurDate.get(Calendar.YEAR), _prefs);
             stringItemListYear.setText(_yearList);
             // write post-init user code here
         ///}
-//        }//GEN-BEGIN:|46-getter|2|
         return stringItemListYear;
     }
-    //</editor-fold>//GEN-END:|46-getter|2|
+    //</editor-fold>                       
 
     //<editor-fold defaultstate="collapsed" desc=" Generated Getter: font ">//GEN-BEGIN:|49-getter|0|49-preInit
     /**
@@ -346,7 +373,7 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
             // write pre-init user code here
             phaseName_si = new StringItem("Current phase:", null, Item.PLAIN);//GEN-BEGIN:|55-getter|1|55-postInit
             phaseName_si.setItemCommandListener(this);
-            phaseName_si.setLayout(ImageItem.LAYOUT_NEWLINE_BEFORE | ImageItem.LAYOUT_NEWLINE_AFTER);
+            phaseName_si.setLayout(ImageItem.LAYOUT_DEFAULT | ImageItem.LAYOUT_NEWLINE_BEFORE | ImageItem.LAYOUT_NEWLINE_AFTER);
             phaseName_si.setFont(getFont1());//GEN-END:|55-getter|1|55-postInit
             
             phaseName_si.setText(calcMoonPhaseName());
@@ -374,13 +401,11 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
 
 
 
-    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: YearList1 ">//GEN-BEGIN:|44-getter|0|44-preInit
     /**
      * Returns an initiliazed instance of YearList1 component.
      * @return the initialized component instance
      */
     public Form getYearList1() {
-//        if (YearList1 == null) {//GEN-END:|44-getter|0|44-preInit
             // write pre-init user code here
             // SKIP_CHECK for null #2
             YearList1 = new Form("", new Item[] { getStringItemListYear() });//GEN-BEGIN:|44-getter|1|44-postInit
@@ -392,10 +417,8 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
             // write post-init user code here
             // SKIP_CHECK for null #2
 
-  //      }//GEN-BEGIN:|44-getter|2|
         return YearList1;
     }
-    //</editor-fold>//GEN-END:|44-getter|2|
 
 
     //<editor-fold defaultstate="collapsed" desc=" Generated Getter: font1 ">//GEN-BEGIN:|81-getter|0|81-preInit
@@ -438,7 +461,7 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
     public Alert getHelpYearList() {
         if (HelpYearList == null) {//GEN-END:|86-getter|0|86-preInit
             // write pre-init user code here
-            HelpYearList = new Alert("New/Full Moon List", "The dates for new/full moon phases for the selected year.\nThe program shows moon phases for any year between 1902 to 2033.\nN - new moon.\nF - full moon.\n(+2) - UTC time zone difference", getImage(), null);//GEN-BEGIN:|86-getter|1|86-postInit
+            HelpYearList = new Alert("New/Full Moon List", "The dates for new/full moon phases for the selected year.\nThe program can show moon phases for any year between 1902 to 2033.\nN - new moon.\nF - full moon.\n", getImage(), null);//GEN-BEGIN:|86-getter|1|86-postInit
             HelpYearList.setTimeout(Alert.FOREVER);//GEN-END:|86-getter|1|86-postInit
             // write post-init user code here
         }//GEN-BEGIN:|86-getter|2|
@@ -455,7 +478,7 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
         if (image == null) {//GEN-END:|90-getter|0|90-preInit
             // write pre-init user code here
             try {//GEN-BEGIN:|90-getter|1|90-@java.io.IOException
-                image = Image.createImage("/res/help1.png");
+                image = Image.createImage("/help1.png");
             } catch (java.io.IOException e) {//GEN-END:|90-getter|1|90-@java.io.IOException
                 e.printStackTrace();
             }//GEN-LINE:|90-getter|2|90-postInit
@@ -522,9 +545,6 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
         return explainPopup;
     }
     //</editor-fold>//GEN-END:|99-getter|2|
-
-
-
 
 
     //<editor-fold defaultstate="collapsed" desc=" Generated Getter: YearList ">//GEN-BEGIN:|32-getter|0|32-preInit
@@ -607,13 +627,156 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
     }
     //</editor-fold>//GEN-END:|113-getter|2|
 
-
-
-
-
+    //<editor-fold defaultstate="collapsed" desc=" Generated Method: initialize ">//GEN-BEGIN:|0-initialize|0|0-preInitialize
     /**
-     * Returns a display instance.
-     * @return the display instance.
+     * Initilizes the application.
+     * It is called only once when the MIDlet is started. The method is called before the <code>startMIDlet</code> method.
+     */
+    private void initialize() {//GEN-END:|0-initialize|0|0-preInitialize
+        // write pre-initialize user code here
+//GEN-LINE:|0-initialize|1|0-postInitialize
+        // write post-initialize user code here
+    }//GEN-BEGIN:|0-initialize|2|
+    //</editor-fold>//GEN-END:|0-initialize|2|
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: frmPrefs ">//GEN-BEGIN:|116-getter|0|116-preInit
+    /**
+     * Returns an initiliazed instance of frmPrefs component.
+     * @return the initialized component instance
+     */
+    public Form getFrmPrefs() {
+        if (frmPrefs == null) {//GEN-END:|116-getter|0|116-preInit
+            // write pre-init user code here
+            //frmPrefs = new Form("Settings", new Item[] { getTimeZoneMode(), getTxtUtcOffset(), getDayLightSaving() });
+            frmPrefs = new Form("Settings");
+            frmPrefs.append(getTimeZoneMode());
+//            frmPrefs.append(getTxtUtcOffset());
+//            frmPrefs.append(getDayLightSaving());
+            
+//GEN-BEGIN:|116-getter|1|116-postInit
+            frmPrefs.addCommand(getBackCommand());
+            frmPrefs.addCommand(getSavePrefs());
+            frmPrefs.setCommandListener(this);//GEN-END:|116-getter|1|116-postInit
+                        
+             // write post-init user code here
+            frmPrefs.setItemStateListener(this);
+            
+            //SKIP_ME:::: COMMENT LINE BELOW!!!!
+            updateSettingsDisplay();
+        }//GEN-BEGIN:|116-getter|2|
+        return frmPrefs;
+    }
+    //</editor-fold>//GEN-END:|116-getter|2|
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: timeZoneMode ">//GEN-BEGIN:|117-getter|0|117-preInit
+    /**
+     * Returns an initiliazed instance of timeZoneMode component.
+     * @return the initialized component instance
+     */
+    public ChoiceGroup getTimeZoneMode() {
+        if (timeZoneMode == null) {//GEN-END:|117-getter|0|117-preInit
+            // write pre-init user code here
+            timeZoneMode = new ChoiceGroup("Time Zone Mode", Choice.EXCLUSIVE);//GEN-BEGIN:|117-getter|1|117-postInit
+            timeZoneMode.append("Auto", null);
+            timeZoneMode.append("Manual", null);
+            timeZoneMode.setFitPolicy(Choice.TEXT_WRAP_DEFAULT);
+            timeZoneMode.setSelectedFlags(new boolean[] { _prefs.autoTimeZone, !_prefs.autoTimeZone });
+            timeZoneMode.setFont(0, null);
+            timeZoneMode.setFont(1, null);//GEN-END:|117-getter|1|117-postInit
+            // write post-init user code here
+            timeZoneMode.setItemCommandListener(this);
+//            _prefs.autoTimeZone;
+//            _prefs.timeZoneOffset;
+//            _prefs.useDayLightSaving;
+        }//GEN-BEGIN:|117-getter|2|
+        return timeZoneMode;
+    }
+    //</editor-fold>//GEN-END:|117-getter|2|
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: options ">//GEN-BEGIN:|118-getter|0|118-preInit
+    /**
+     * Returns an initiliazed instance of options component.
+     * @return the initialized component instance
+     */
+    public Command getOptions() {
+        if (options == null) {//GEN-END:|118-getter|0|118-preInit
+            // write pre-init user code here
+            options = new Command("Settings", Command.ITEM, 0);//GEN-LINE:|118-getter|1|118-postInit
+            // write post-init user code here
+        }//GEN-BEGIN:|118-getter|2|
+        return options;
+    }
+    //</editor-fold>//GEN-END:|118-getter|2|
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: backCommand ">//GEN-BEGIN:|121-getter|0|121-preInit
+    /**
+     * Returns an initiliazed instance of backCommand component.
+     * @return the initialized component instance
+     */
+    public Command getBackCommand() {
+        if (backCommand == null) {//GEN-END:|121-getter|0|121-preInit
+            // write pre-init user code here
+            backCommand = new Command("Cancel", Command.BACK, 0);//GEN-LINE:|121-getter|1|121-postInit
+            // write post-init user code here
+        }//GEN-BEGIN:|121-getter|2|
+        return backCommand;
+    }
+    //</editor-fold>//GEN-END:|121-getter|2|
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: savePrefs ">//GEN-BEGIN:|124-getter|0|124-preInit
+    /**
+     * Returns an initiliazed instance of savePrefs component.
+     * @return the initialized component instance
+     */
+    public Command getSavePrefs() {
+        if (savePrefs == null) {//GEN-END:|124-getter|0|124-preInit
+            // write pre-init user code here
+            savePrefs = new Command("Save", Command.OK, 0);//GEN-LINE:|124-getter|1|124-postInit
+            // write post-init user code here
+        }//GEN-BEGIN:|124-getter|2|
+        return savePrefs;
+    }
+    //</editor-fold>//GEN-END:|124-getter|2|
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: txtUtcOffset ">//GEN-BEGIN:|133-getter|0|133-preInit
+    /**
+     * Returns an initiliazed instance of txtUtcOffset component.
+     * @return the initialized component instance
+     */
+    public TextField getTxtUtcOffset() {
+        if (txtUtcOffset == null) {//GEN-END:|133-getter|0|133-preInit
+            // write pre-init user code here
+            txtUtcOffset = new TextField("UTC Offset", ""+_prefs.timeZoneOffset, 32, TextField.NUMERIC);//GEN-LINE:|133-getter|1|133-postInit
+            // write post-init user code here
+            txtUtcOffset.setMaxSize(3);
+
+            
+        }//GEN-BEGIN:|133-getter|2|
+        return txtUtcOffset;
+    }
+    //</editor-fold>//GEN-END:|133-getter|2|
+
+    //<editor-fold defaultstate="collapsed" desc=" Generated Getter: dayLightSaving ">//GEN-BEGIN:|134-getter|0|134-preInit
+    /**
+     * Returns an initiliazed instance of dayLightSaving component.
+     * @return the initialized component instance
+     */
+    public ChoiceGroup getDayLightSaving() {
+        if (dayLightSaving == null) {//GEN-END:|134-getter|0|134-preInit
+            // write pre-init user code here
+            dayLightSaving = new ChoiceGroup("Day Light Saving", Choice.MULTIPLE);//GEN-BEGIN:|134-getter|1|134-postInit
+            dayLightSaving.append("Enabled", null);
+            dayLightSaving.setSelectedFlags(new boolean[] { _prefs.useDayLightSaving });
+            dayLightSaving.setFont(0, null);//GEN-END:|134-getter|1|134-postInit
+//            choiceGroup.setSelectedFlags(_prefs.xxxx);
+            // write post-init user code here
+        }//GEN-BEGIN:|134-getter|2|
+        return dayLightSaving;
+    }
+    //</editor-fold>//GEN-END:|134-getter|2|
+//GEN-LINE:|44-getter|1|
+    /*//GEN-LINE:|44-getter|0|44-preInit
+     * Returns a display instance.//GEN-LINE:|44-getter|2|
      */
     public Display getDisplay() {
         return Display.getDisplay(this);
@@ -667,10 +830,13 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
             moonAge_si.setText(calcMoonAgeData());
             setPhaseImage(_phaseIndex);
         }
+        if (item==timeZoneMode){
+            _prefs.autoTimeZone = timeZoneMode.isSelected(0);
+            updateSettingsDisplay();
+        }
     }
     
     public String calcMoonPhaseName(){
-    	
         
         String sPhase = Double.toString(_phase);
         
@@ -679,6 +845,26 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
     }
     public String calcMoonAgeData(){
         return _mp.getMoonAgeAsDays();
+    }
+
+    public void commandAction(Command arg0, Item arg1) {
+    }
+
+    private void updateSettingsDisplay() {
+        if (_prefs.autoTimeZone){
+//            System.out.println("DBG: frmPrefs.size()=" + frmPrefs.size());
+            int i = frmPrefs.size();
+            while( i-- >1){
+                frmPrefs.delete(i); //delete item txtUtcOffset
+                                     //txtUtcOffset.setConstraints(TextField.UNEDITABLE);
+                                     //delete item dayLightSaving
+                                     //dayLightSaving.
+            }
+            
+        } else {
+            frmPrefs.append(getTxtUtcOffset());
+            frmPrefs.append(getDayLightSaving());
+        }
     }
     
 }

@@ -4,6 +4,7 @@ package Moon;
 /// import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Created by IntelliJ IDEA.
@@ -57,6 +58,7 @@ public class MoonPhase {
     }
     public MoonPhase(Calendar c){
         _curCal = c;
+        
     }
 
     /*
