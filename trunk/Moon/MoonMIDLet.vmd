@@ -28,6 +28,7 @@
                     <Property name="instanceName" typeID="Pjava.lang.String" value="VexitCommand"/>
                     <Property name="label" typeID="Pjava.lang.String" value="VExit"/>
                     <Property name="type" typeID="Pint" value="V7"/>
+                    <Property name="priority" typeID="Pint" value="V5"/>
                 </Component>
                 <Component componentID="22" typeID="Cjavax.microedition.lcdui.Command">
                     <Property name="instanceName" typeID="Pjava.lang.String" value="VhelpCommand"/>
@@ -182,15 +183,6 @@
                     <Property name="commands" typeID="1C#CommandEventSource" value="A3:3_R683_R854_R114"/>
                     <Property name="title" typeID="Pjava.lang.String" value="V"/>
                     <Property name="commandListener" typeID="C#CommandListener" value="R7"/>
-                    <Property name="items" typeID="1Cjavax.microedition.lcdui.Item" value="A1:3_R46"/>
-                    <Component componentID="46" typeID="Cjavax.microedition.lcdui.StringItem">
-                        <Property name="instanceName" typeID="Pjava.lang.String" value="VstringItemListYear"/>
-                        <Property name="layout" typeID="Pint" value="V0"/>
-                        <Property name="commands" typeID="1C#ItemCommandEventSource" value="A0:"/>
-                        <Property name="itemCommandListener" typeID="C#ItemCommandListener" value="R17"/>
-                        <Property name="font" typeID="Cjavax.microedition.lcdui.Font" value="R49"/>
-                        <Property name="appearanceMode" typeID="Pint" value="V0"/>
-                    </Component>
                     <Component componentID="68" typeID="C#CommandEventSource">
                         <Property name="eventHandler" typeID="C#EventHandler" value="R71"/>
                         <Property name="displayable" typeID="Cjavax.microedition.lcdui.Displayable" value="R44"/>
@@ -321,12 +313,12 @@
         </Component>
     </Document>
     <FlowScene version="1">
-        <Node componentID="116" descriptorID="componentNode116" x="413" y="235"/>
-        <Node componentID="86" descriptorID="componentNode86" x="515" y="111"/>
-        <Node componentID="59" descriptorID="componentNode59" x="337" y="153"/>
-        <Node componentID="14" descriptorID="componentNode14" x="54" y="245"/>
-        <Node componentID="2" descriptorID="componentNode2" x="19" y="14"/>
-        <Node componentID="44" descriptorID="componentNode44" x="335" y="17"/>
         <Node componentID="99" descriptorID="componentNode99" x="512" y="148"/>
+        <Node componentID="2" descriptorID="componentNode2" x="19" y="14"/>
+        <Node componentID="86" descriptorID="componentNode86" x="515" y="111"/>
+        <Node componentID="116" descriptorID="componentNode116" x="413" y="235"/>
+        <Node componentID="14" descriptorID="componentNode14" x="54" y="245"/>
+        <Node componentID="44" descriptorID="componentNode44" x="335" y="17"/>
+        <Node componentID="59" descriptorID="componentNode59" x="337" y="153"/>
     </FlowScene>
 </VisualDesign>
