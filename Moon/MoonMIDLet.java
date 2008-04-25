@@ -162,7 +162,7 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
             } else if (command == savePrefs) {//GEN-LINE:|7-commandAction|9|101-preAction
                 // write pre-action user code here
                 ////////update.PREFS
-                boolean hasChanged = false;
+                boolean hasChanged = true;
                 if (txtUtcOffset.size() ==0){
                     txtUtcOffset.setString("0");
                 }
@@ -232,7 +232,7 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
     public Command getExitCommand() {
         if (exitCommand == null) {//GEN-END:|18-getter|0|18-preInit
             // write pre-init user code here
-            exitCommand = new Command("Exit", Command.EXIT, 0);//GEN-LINE:|18-getter|1|18-postInit
+            exitCommand = new Command("Exit", Command.EXIT, 5);//GEN-LINE:|18-getter|1|18-postInit
         // write post-init user code here
         }//GEN-BEGIN:|18-getter|2|
         return exitCommand;
