@@ -1,7 +1,8 @@
-/*
+/** 
+ * Moon phase calculation routines
  * TODO: 1.Fix mismatched values for % and moon age
  * TODO: 2. Add next full/new moon data.
- * TODO: 3.Fix timezone DONE
+ * TODO: 3.Fix timezone 
  */
 package Moon;
 
@@ -79,11 +80,11 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
      * The MoonMIDLet constructor.
      */
     public MoonMIDLet() {
+        _prefs = new Prefs();
         _calCurDate = Calendar.getInstance();
-        _mp = new MoonPhase(_calCurDate);
+        _mp = new MoonPhase(_calCurDate, _prefs);
         _phase = _mp.getPhase();
         _phaseIndex = _mp.getPhaseIndex();
-        _prefs = new Prefs();
     }
     
 
@@ -162,22 +163,34 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
             } else if (command == savePrefs) {//GEN-LINE:|7-commandAction|9|101-preAction
                 // write pre-action user code here
                 ////////update.PREFS
-                boolean hasChanged = true;
-                if (txtUtcOffset.size() ==0){
-                    txtUtcOffset.setString("0");
-                }
+                boolean hasChanged = false;
+                
                 if (_prefs.autoTimeZone != timeZoneMode.isSelected(0)){
-                    _prefs.autoTimeZone = timeZoneMode.isSelected(0);
-                    hasChanged = true;
+                            _prefs.autoTimeZone = timeZoneMode.isSelected(0);
+                            hasChanged = true;
                 }
-                if (_prefs.timeZoneOffset != Short.parseShort(txtUtcOffset.getString())){
-                    _prefs.timeZoneOffset = Short.parseShort(txtUtcOffset.getString());
-                    hasChanged = true;
-                }
-                if (_prefs.useDayLightSaving != dayLightSaving.isSelected(0)){
+                
+                if (txtUtcOffset!=null){
+                    
+                    if (txtUtcOffset.size() ==0){
+                        txtUtcOffset.setString("0");
+                    }
+                    if (_prefs.timeZoneOffset != 
+                            Short.parseShort(txtUtcOffset.getString())){
+                    
+                        _prefs.timeZoneOffset = Short.parseShort(txtUtcOffset.getString());
+                        hasChanged = true;
+                    }
+                }        
+
+                if (dayLightSaving != null
+                                && _prefs.useDayLightSaving != 
+                                dayLightSaving.isSelected(0)){
+                    
                     _prefs.useDayLightSaving = dayLightSaving.isSelected(0);
                     hasChanged = true;
                 }
+                
                 if (hasChanged) {
                     _prefs.Save();
                 }
@@ -276,7 +289,7 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
     public Command getHelpCommand() {
         if (helpCommand == null) {//GEN-END:|22-getter|0|22-preInit
             // write pre-init user code here
-            helpCommand = new Command("Help", Command.HELP, 0);//GEN-LINE:|22-getter|1|22-postInit
+            helpCommand = new Command("Help", Command.HELP, 3);//GEN-LINE:|22-getter|1|22-postInit
             // write post-init user code here
         }//GEN-BEGIN:|22-getter|2|
         return helpCommand;
@@ -661,9 +674,10 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
              // write post-init user code here
             frmPrefs.setItemStateListener(this);
             
-            //SKIP_ME:::: COMMENT LINE BELOW!!!!
-            updateSettingsDisplay();
+            //SKIP_ME:::: 
+            
         }//GEN-BEGIN:|116-getter|2|
+        updateSettingsDisplay();
         return frmPrefs;
     }
     //</editor-fold>//GEN-END:|116-getter|2|
@@ -851,19 +865,23 @@ public class MoonMIDLet extends MIDlet implements CommandListener, ItemCommandLi
     }
 
     private void updateSettingsDisplay() {
+        int numItems = frmPrefs.size();        
+        
         if (_prefs.autoTimeZone){
 //            System.out.println("DBG: frmPrefs.size()=" + frmPrefs.size());
-            int i = frmPrefs.size();
-            while( i-- >1){
-                frmPrefs.delete(i); //delete item txtUtcOffset
+
+            while( numItems-- >1){
+                frmPrefs.delete(numItems); //delete item txtUtcOffset
                                      //txtUtcOffset.setConstraints(TextField.UNEDITABLE);
                                      //delete item dayLightSaving
                                      //dayLightSaving.
             }
             
         } else {
-            frmPrefs.append(getTxtUtcOffset());
-            frmPrefs.append(getDayLightSaving());
+            if (numItems < 3){
+                frmPrefs.append(getTxtUtcOffset());
+                frmPrefs.append(getDayLightSaving());
+            }
         }
     }
     
