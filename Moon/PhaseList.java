@@ -7,13 +7,9 @@ package Moon;
  * Generates a list of new and full moon dates for the current year.
  * converted from JavaScript code found at http://stellafane.org/observing/moon_phase.html
  */
-//import static java.lang.Math.*;
 
 import java.util.Calendar;
 import java.util.Date;
-//import java.lang.Math;
-
-//import java.text.DateFormat;
 import java.util.TimeZone;
 
 public class PhaseList {
@@ -41,6 +37,8 @@ public class PhaseList {
      * <p>Be aware that for times hundreds of years in the past or 
      * future, the difference between TDT and UTC can be many 
      * hours. See Meeus' book for additional details.</p>
+     * @param tCal Calendar object
+     * @return UTC Calendar object
      */
     private static Calendar TDTtoUTC(Calendar tCal) {
 
@@ -95,6 +93,7 @@ public class PhaseList {
     /** Gets Julian Date as a double value and returns
      * a UTC Calendar object
      * @param jd Julian Date
+     * @return UTC Calendar  object
      */
     private static Calendar JDtoUTC2(double jd) {
         int z;
@@ -147,9 +146,10 @@ public class PhaseList {
         return cal;
     }
 
-
+    /**Week days array*/
     private static final String WEEK_DAYS[] = {"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"};
 
+    /**Month name array*/
     private static final String MONTH_NAMES[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
     /**
@@ -157,6 +157,8 @@ public class PhaseList {
      * new and full moon phases for a given <code>year</code> 
      * @param year 
      * @param prefs contains time-zone settings @see Prefs
+     * @return String object with line breaks containing
+     * the list of new/full moon phases for the given year
      * <p>Converted from Basic by Roger W. Sinnot, Sky & Telescope, March 1985.</p>
      */
     public static String moonPhaseListYear(int year, Prefs prefs) {
@@ -224,37 +226,34 @@ public class PhaseList {
             if (prefs.autoTimeZone){
                 /* adjust local time zone display*/
                 TimeZone tz = TimeZone.getDefault();
-    //            TimeZone tz = UTC.getTimeZone();
-    //            int tzOffset = tz. getRawOffset() / (1000 * 60*60);
                 tzOffsetMillis = tz.getOffset(
                         1, //era AD
                         UTC.get(Calendar.YEAR),
                         UTC.get(Calendar.MONTH),
                         UTC.get(Calendar.DAY_OF_MONTH),
                         UTC.get(Calendar.DAY_OF_WEEK),
-                        0
+                        0 //milliseconds 
                 );
             } else{
-                tzOffsetMillis = prefs.timeZoneOffset * 1000 * 60*60;
+                tzOffsetMillis = prefs.timeZoneOffset*1000*60*60;
                 if (prefs.useDayLightSaving 
                         && UTC.get(Calendar.MONTH)> Calendar.MARCH
-                        && UTC.get(Calendar.MONTH)<  Calendar.NOVEMBER) {
+                        && UTC.get(Calendar.MONTH)< Calendar.NOVEMBER) {
                     // add 1 hour manual time zone correction
                     tzOffsetMillis += 1000 * 60 * 60;
                 }
             }
-            //UTC.setTimeZone(new TimeZone());
-            //UTC.set(Calendar.HOUR_OF_DAY, UTC.get(Calendar.HOUR_OF_DAY) + tzOffset);
+            
             long currTime = UTC.getTime().getTime();
             UTC.setTime(new Date(currTime + tzOffsetMillis));
-
-            long tzHours = (tzOffsetMillis / (1000 * 60*60));
-            String tzPlusMinus = tzHours > 0? "+":"" ;
-
+            long tzDiffHours = (tzOffsetMillis / (1000 * 60*60));
+            
+            String tzPlusMinus = tzDiffHours > 0? "+":"" ;
 
             // normalize minutes display
             int int_minutes = UTC.get(Calendar.MINUTE);
-            String str_minutes = int_minutes < 10 ? "0" + int_minutes : "" + int_minutes;
+            String str_minutes = int_minutes < 10 ? "0" + int_minutes :
+                                                    "" + int_minutes;
 
             strbuf.append(newOrFull);
             strbuf.append(WEEK_DAYS[UTC.get(Calendar.DAY_OF_WEEK) - 1]);
@@ -268,12 +267,13 @@ public class PhaseList {
             strbuf.append(str_minutes);
             strbuf.append(" (");
             strbuf.append(tzPlusMinus);
-            strbuf.append(tzHours);
+            strbuf.append(tzDiffHours);
             strbuf.append(")\n");
 
-        } // Next
+        } // Next lunation
         return strbuf.toString(); ///////////////
-    } //End MoonPhase
+    }
+
 
 //    public static void main(String args[]) {
 //        //Calendar calPhase = ;

@@ -1,19 +1,22 @@
 package Moon;
 
-
-/// import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
+//import java.util.TimeZone;
 
-/**
- * Created by IntelliJ IDEA.
- * User: xh
- * Date: Mar 8, 2008
- * Time: 2:02:24 AM
- * Converted from rc-utils.c in GCal package (http://ftp.gnu.org/gnu/gcal/gcal-2.40.tar.gz)
+/**<p>Moon phase calclulation routines for computing:</p> 
+ * <ol>
+ * <li> current moon phase as an index from 0 to 7,</li> 
+ * <li> current moon age as days/hours/minutes, and</li>
+ * <li> percentage of the moon's illuminated portion</li>
+ * </ol>
+ * <p>Converted from rc-utils.c in the GCal package 
+ * (http://ftp.gnu.org/gnu/gcal/gcal-2.40.tar.gz)</p>
  */
 public class MoonPhase {
+
+    Prefs prefs;
 
     public static final double MY_PI = 3.14159265358979323846;
     public static final double MY_TWO_PI = 6.28318530717958647692;
@@ -50,20 +53,23 @@ public class MoonPhase {
     private static double _moonAgeAsDays;
 
 
-    public MoonPhase(){
+/*    public MoonPhase(Prefs prefs){
 
-        this(Calendar.getInstance());
-        _curCal.setTime(new Date());//  setTimeInMillis(System.currentTimeMillis());
+        this(Calendar.getInstance(prefs));
+        //_curCal.setTime(new Date());//  _curCal.setTimeInMillis(System.currentTimeMillis());
         
-    }
-    public MoonPhase(Calendar c){
+    }*/
+    public MoonPhase(Calendar c, Prefs mPrefs){
+        /// TODO: Add timezone adjustments here
         _curCal = c;
-        
+        prefs = mPrefs;
+        //_curCal =  adjustTimeZone(c, getCurrentTimeZone());
+
     }
 
     /*
-    *  Some useful mathematical functions used by John Walkers `phase()' function.
-    */
+     * Some useful mathematical functions used by John Walkers `phase()' function.
+     */
     public static double FIXANGLE(double a) {
         return (a) - 360.0 * (Math.floor((a) / 360.0));
     }
@@ -160,122 +166,61 @@ public class MoonPhase {
         return gc_x < 0 ? -1 : gc_x > 0 ? 1 : 0;
     }
 
-//    /*
-//   Computes yesterday's, today's and tomorrow's moonphase by calling the
-//     `phase()' function for each day and sets `&is_full_moon' to TRUE
-//     in case today's Moon is in the "Full" or in the "New" phase, otherwise
-//     to FALSE.  Returns the illuminated fraction of the Moon's disc as an
-//     integer value within the range of -100...0...+100, which has a negative
-//     sign in case the Moon wanes, otherwise the sign is positive.
-//*/
-//    public int the_phase(int day,
-//                         int month,
-//                         int year,
-//                         int hour,
-//                         int min) {
-//        boolean is_full_new;
-//        double the_date;
-//        double the_time = (double) hour * 60.0 + (double) min;
-//        double yes;
-//        double tod;
-//        double tom;
-//
-//        is_full_new = false;
-//        the_date = (double) (date2num(day, month, year) + RC_MIN_BCE_TO_1_CE - (int) 2);
-//        if (the_time > 0.0)
-//            the_date += (1.0 / (1440.0 / the_time));
-//        yes = phase(the_date);
-//        the_date += 1.0;
-//        tod = phase(the_date);
-//        the_date += 1.0;
-//        tom = phase(the_date);
-//        if (SGN(yes) != SGN(tod)
-//                || SGN(tod) != SGN(tom)) {
-//            if ((SGN(tod) == -1)
-//                    && (SGN(tom) >= 0)) {
-//                if (Math.abs(tod) - Math.abs(tom) <= 0.0)
-//                    is_full_new = true;
-//            } else if ((SGN(yes) == -1)
-//                    && (SGN(tom) >= 0)) {
-//                if (Math.abs(tod) - Math.abs(yes) <= 0.0)
-//                    is_full_new = true;
-//            } else if ((SGN(tod) >= 0)
-//                    && (SGN(tom) == -1)) {
-//                if ((100.0 - tod) - (100.0 + tom) <= 0.0)
-//                    is_full_new = true;
-//            } else if ((SGN(yes) >= 0)
-//                    && (SGN(tod) == -1)) {
-//                if ((100.0 + tod) - (100.0 - yes) <= 0.0)
-//                    is_full_new = true;
-//            }
-//            if (!is_full_new
-//                    && (Math.abs(Math.floor(tod)) == 0.0
-//                    || Math.abs(Math.floor(tod)) == 100.0))
-//                tod = Math.ceil(tod);
-//        }
-//        tod = Math.floor(tod);
-//        if (!is_full_new
-//                && (Math.abs(tod) == 0.0
-//                || Math.abs(tod) == 100.0))
-//            tod += 1.0;
-//
-//        return ((int) tod);
-//    }
 
-    /*
-       Calculates the phase of the Moon and returns the illuminated fraction of
+    /**
+       <p>Calculates the phase of the Moon and returns the illuminated fraction of
          the Moon's disc as a value within the range of -99.9~...0.0...+99.9~,
          which has a negative sign in case the Moon wanes, otherwise the sign
          is positive.  The New Moon phase is around the 0.0 value and the Full
          Moon phase is around the +/-99.9~ value.  The argument is the time for
-         which the phase is requested, expressed as a Julian date and fraction.
-       This function is taken from the program "moontool" by John Walker,
+         which the phase is requested, expressed as a Julian date and fraction.</p>
+       <p>This function is taken from the program "moontool" by John Walker,
          February 1988, which is in the public domain.  So see it for more
          information!  It is adapted (crippled) and `pretty-printed' to the
          requirements of Gcal, which means it is lacking all the other useful
-         computations of astronomical values of the original code.
+         computations of astronomical values of the original code.</p>
 
-       Here is the blurb from "moontool":
-       ... The algorithms used in this program to calculate the positions Sun
+       <p>Here is the blurb from "moontool":</p>
+       <p>...The algorithms used in this program to calculate the positions Sun
        and Moon as seen from the Earth are given in the book "Practical Astronomy
        With Your Calculator" by Peter Duffett-Smith, Second Edition,
        Cambridge University Press, 1981. Ignore the word "Calculator" in the
        title; this is an essential reference if you're interested in
        developing software which calculates planetary positions, orbits,
        eclipses, and the like. If you're interested in pursuing such
-       programming, you should also obtain:
+       programming, you should also obtain:</p>
 
-       "Astronomical Formulae for Calculators" by Jean Meeus, Third Edition,
-       Willmann-Bell, 1985. A must-have.
+       <p>"Astronomical Formulae for Calculators" by Jean Meeus, Third Edition,
+       Willmann-Bell, 1985. A must-have.</p>
 
-       "Planetary Programs and Tables from -4000 to +2800" by Pierre
+       </p>"Planetary Programs and Tables from -4000 to +2800" by Pierre
        Bretagnon and Jean-Louis Simon, Willmann-Bell, 1986. If you want the
-       utmost (outside of JPL) accuracy for the planets, it's here.
+       utmost (outside of JPL) accuracy for the planets, it's here.</p>
 
-       "Celestial BASIC" by Eric Burgess, Revised Edition, Sybex, 1985. Very
+       <p>"Celestial BASIC" by Eric Burgess, Revised Edition, Sybex, 1985. Very
        cookbook oriented, and many of the algorithms are hard to dig out of
-       the turgid BASIC code, but you'll probably want it anyway.
+       the turgid BASIC code, but you'll probably want it anyway.</p>
 
-       Many of these references can be obtained from Willmann-Bell, P.O. Box
+       <p>Many of these references can be obtained from Willmann-Bell, P.O. Box
        35025, Richmond, VA 23235, USA. Phone: (804) 320-7016. In addition
        to their own publications, they stock most of the standard references
-       for mathematical and positional astronomy.
+       for mathematical and positional astronomy.</p>
 
-       This program was written by:
+       <p>This program was written by:</p>
 
-          John Walker
-          Autodesk, Inc.
-          2320 Marinship Way
-          Sausalito, CA 94965
-          (415) 332-2344 Ext. 829
+          <p>John Walker<br>
+          Autodesk, Inc.<br>
+          2320 Marinship Way<br>
+          Sausalito, CA 94965<br>
+          (415) 332-2344 Ext. 829</p>
 
-          Usenet: {sun!well}!acad!kelvin
+          <p>Usenet: {sun!well}!acad!kelvin</p>
 
-       This program is in the public domain: "Do what thou wilt shall be the
+       <p>This program is in the public domain: "Do what thou wilt shall be the
        whole of the law". I'd appreciate receiving any bug fixes and/or
        enhancements, which I'll incorporate in future versions of the
        program. Please leave the original attribution information intact so
-       that credit and blame may be properly apportioned.
+       that credit and blame may be properly apportioned.</p>
     */
     public static double phase(double julian_date) {
         double date_within_epoch;
@@ -340,19 +285,19 @@ public class MoonPhase {
                 Julian time (i.e. Julian date plus day fraction,
                 expressed as a double).
  @param cal Calendar object
- @return JD Julian date as float number
- <p>Converted to Java from original source MOONCALC.C in moontool http://www.fourmilab.ch/moontoolw/moont16s.zip</p>
+ @return JD float Julian date
+ <p>Converted to Java by vriolk@gmail.com from original file mooncalc.c,
+ part of moontool http://www.fourmilab.ch/moontoolw/moont16s.zip</p>
  */
-
-    public static double  calendarToJD_2(Calendar cal) {
+    public static double  calendarToJD(Calendar cal) {
 
         /* Algorithm as given in Meeus, Astronomical Algorithms, Chapter 7, page 61*/
         long year = cal.get(Calendar.YEAR);
-        int mon  = cal.get(Calendar.MONTH);
-        int mday = cal.get(Calendar.DATE);
-        int hour = cal.get(Calendar.HOUR_OF_DAY);
-        int min = cal.get(Calendar.MINUTE);
-        int sec = cal.get(Calendar.SECOND);
+        int mon   = cal.get(Calendar.MONTH);
+        int mday  = cal.get(Calendar.DATE);
+        int hour  = cal.get(Calendar.HOUR_OF_DAY);
+        int min   = cal.get(Calendar.MINUTE);
+        int sec   = cal.get(Calendar.SECOND);
 
         int a, b, m;
         long y;
@@ -365,9 +310,9 @@ public class MoonPhase {
             m += 12;
         }
 
-        /* Determine whether date is in Julian or Gregorian calendar based on
-   canonical date of calendar reform. */
-
+        /* Determine whether date is in Julian or Gregorian
+         * calendar based on canonical date of calendar reform.
+         */
         if ((year < 1582) || ((year == 1582) && ((mon < 9) || (mon == 9 && mday < 5)))) {
             b = 0;
         } else {
@@ -380,32 +325,13 @@ public class MoonPhase {
                 ((sec + 60L * (min + 60L * hour)) / 86400.0);
     }
 
-
-//    public static double calendarToJD_BAD_WRONG(Calendar cal) {
-//        double JDE;
-//        int a, b;
-//        double d = (cal.get(Calendar.DATE) + cal.get(Calendar.HOUR_OF_DAY) / 24);
-//
-//        int tmp_year;
-//        tmp_year = cal.get(Calendar.YEAR);
-//
-//        long tmp_month = cal.get(Calendar.MONTH)+1;
-//
-//        if ((1 + cal.get(Calendar.MONTH)) <= 2) {
-//            //cal.yy--;
-//            tmp_year--;
-//            //cal.mm+=12;
-//            tmp_month += 12;
-//        }
-//        a = tmp_year / 10;
-//        b = 2 - a + (a / 4);
-//
-//        JDE = (365.25 * (tmp_year + 4716)) + (30.6001 * (tmp_month + 1)) + d + b - 1524.5;
-//        return JDE;
-//    }
-
+    /**
+     * Returns current phase as double value
+     * Uses class Calendar field _curCal
+     * */
     public double getPhase(){
-        _JD = calendarToJD_2(_curCal);
+       /*!!! TODO: insert timezone correction here*/
+        _JD = calendarToJD(_curCal);
         _phase = phase(_JD);
         return _phase;
     }
@@ -413,16 +339,16 @@ public class MoonPhase {
     public int getPhaseIndex(){
     	
     	return computePhaseIndex(_curCal);
-    	//return (int) (_moonAgeAsDays / 7);
-        
-        //double norm_phase = _phase;
-        
-        //if (_phase < 0)
-        //    norm_phase = 100 - -_phase;
-        
-        //return (int)( (norm_phase)/2.0 / (100.0/7));
         
     }
+    /**
+     * Computes the moon phase index as a value from 0 to 7
+     * Used to display the phase name and the moon image
+     * for the current phase
+     * @param cal Calendar calendar object for today's date
+     * @return moon index 0..7
+     * 
+     */
     private static int computePhaseIndex(Calendar cal){
 
      int    day_year[] = { -1, -1, 30, 58, 89, 119,
@@ -451,11 +377,11 @@ public class MoonPhase {
         double day_exact = day + hour/24 + min/1440 + sec/86400;
         
 
-        //int             phase;          // Moon phase
-        int             cent;           // Century number (1979 = 20)
-        int             epact;          // Age of the moon on Jan. 1
-        double             diy;            // Day in the year
-        int             golden;         // Moon's golden number
+        //int      phase;    // Moon phase
+        int        cent;     // Century number (1979 = 20)
+        int        epact;    // Age of the moon on Jan. 1
+        double     diy;      // Day in the year
+        int        golden;   // Moon's golden number
 
         if (month < 0 || month > 12) {
             month = 0; // Just in case
@@ -492,22 +418,18 @@ public class MoonPhase {
         return(phase);
     }
     
-    // isLeapYearP
-    //
-    // Return true if the year is a leapyear
-
+    /** isLeapYearP
+     Return true if the year is a leapyear
+     */
     private static boolean isLeapYearP(int year) {
         return ((year % 4 == 0) &&
                 ((year % 400 == 0) || (year % 100 != 0)));
     }
 
-
     public void updateCal(Calendar c) {
-        //To change body of created methods use File | Settings | File Templates.
         _curCal =c;
-        _JD = calendarToJD_2(_curCal);
+        _JD = calendarToJD(_curCal);
         _phase = phase(_JD);
-
     }
 
     public String getMoonAgeAsDays() {
@@ -516,12 +438,11 @@ public class MoonPhase {
         int aom_h = (int) (24 * (_moonAgeAsDays - Math.floor(_moonAgeAsDays)));
         int aom_m = (int) (1440 * (_moonAgeAsDays - Math.floor(_moonAgeAsDays))) % 60;
 
-
         return "" + aom_d + (aom_d == 1 ? " day, ": " days, " ) +
                 aom_h + (aom_h == 1 ? " hour, ":" hours, ") +
                 aom_m + (aom_m == 1 ? " minute":" minutes");
     }
-    
+
     
     static public double atan(double x) {
         double SQRT3 = 1.732050807568877294;
@@ -561,9 +482,11 @@ public class MoonPhase {
             sp--;
         }
         // invertation took place
-        if(Invert) a=Math.PI/2-a;
+        if(Invert) 
+            a=Math.PI/2-a;
         // sign change took place
-        if(signChange) a=-a;
+        if(signChange) 
+            a=-a;
         //
         return a;
     }
@@ -591,7 +514,7 @@ public class MoonPhase {
         //System.out.println( new SimpleDateFormat("EEEE, dd-MMMM-yyyy HH:mm zzzz").format(c.getTime()));
 
 //        double JD = calendarToJD_BAD_WRONG(c);
-//        double JD2 =calendarToJD_2(c);
+//        double JD2 =calendarToJD(c);
 //
 //        System.out.println("Julian Date: " + JD);
 //        System.out.println("Julian Date2: " + JD2);
@@ -608,8 +531,19 @@ public class MoonPhase {
 //        System.out.printf("F 11-Jan-2009 2454842.6434176303 %.8f\n", phase(2454842.6434176303));
 //        System.out.printf("N 07-Mar-2008 2454533.2179779503 %.8f\n", phase(2454533.2179779503));
 
+     private static Calendar adjustTimeZone(Calendar c, int offsetInHours){
+        long currTime = c.getTime().getTime();
+        c.setTime(new Date(currTime + offsetInHours*1000*60*60 ));
+        return c;
+    }
 
-    
+    public int getCurrentTimeZone(){
+        if (this.prefs.autoTimeZone){
+            return TimeZone.getDefault().getRawOffset()/1000*60*60;
+        } else{
+            return prefs.timeZoneOffset;
+        }
+    }
 
 }
 
