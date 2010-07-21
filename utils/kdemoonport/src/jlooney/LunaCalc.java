@@ -29,7 +29,8 @@ public class LunaCalc {
 
     private static final int TEXT_WIDTH = 45;
     private final static long MILLSECS_PER_DAY = 24 * 60 * 60 * 1000;
-    private static final String DATE_FORMAT = "%1$tA, %1$td-%1$tB-%1$tY %1$tT";
+    private static final String DATE_FORMAT = "%1$ta, %1$td-%1$tb-%1$ty %1$tR";
+    // Thursday, 22-July-2010 01:03:07 private static final String DATE_FORMAT = "%1$tA, %1$td-%1$tB-%1$tY %1$tT";
 
     // private static final String DATE_FORMAT =
     // "%1$ta, %1$td-%1$tm-%1$tb-%1$tY %1$tH:%1$tM:%1$tS";  
