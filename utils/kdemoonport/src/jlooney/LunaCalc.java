@@ -29,45 +29,41 @@ public class LunaCalc {
 
     private static final int TEXT_WIDTH = 45;
     private final static long MILLSECS_PER_DAY = 24 * 60 * 60 * 1000;
-    private static final String DATE_FORMAT = "%1$ta, %1$td-%1$tb-%1$ty %1$tR";
+    static final String DATE_FORMAT = "%1$ta, %1$td-%1$tb-%1$ty %1$tR";
     // Thursday, 22-July-2010 01:03:07 private static final String DATE_FORMAT = "%1$tA, %1$td-%1$tB-%1$tY %1$tT";
 
     // private static final String DATE_FORMAT =
     // "%1$ta, %1$td-%1$tm-%1$tb-%1$tY %1$tH:%1$tM:%1$tS";  
-    
-    public enum Phase {LAST_NEW, NEXT_FULL, NEXT_NEW, CUR_PHASE, MOON_AGE}
 
+    public enum Phase {LAST_NEW, NEXT_FULL, NEXT_NEW, CUR_PHASE, MOON_AGE};
 
     /**
      * @param time
      * @return Map<String, Calendar> map of phase descriptions and dates
      */
     public static MoonConditions calcStatus(Calendar time) {
-	int lun = 0;
+	int lunation = 0;
 	Calendar last_new = null;
 	Calendar next_new = null;
-	Calendar now = Calendar.getInstance();
+	Calendar now = Calendar.getInstance(TimeZone.getDefault());
 	StringBuffer comment = new StringBuffer("Current phase: ");
-	// use a treemap to get free key sorting
-//	TreeMap<Calendar, String> phases = new TreeMap<Calendar, String>();
 	MoonConditions conditions = new MoonConditions();
-	//List<MoonEvent> events = new ArrayList<MoonEvent>();
 
 	do {
-	    double JDE = Phases.moonphasebylunation(lun, 0);
+	    double JDE = Phases.moonphasebylunation(lunation, 0);
 	    last_new = next_new;
 	    next_new = Phases.JDtoDate(JDE, null);
-	    lun++;
+	    lunation++;
 	} while (next_new.compareTo(time) < 0);
 
-	lun -= 2;
+	lunation -= 2;
 
 	Calendar first_quarter = Phases.JDtoDate(
-		Phases.moonphasebylunation(lun, 1), null);
+		Phases.moonphasebylunation(lunation, 1), null);
 	Calendar full_moon = Phases.JDtoDate(
-		Phases.moonphasebylunation(lun, 2), null);
+		Phases.moonphasebylunation(lunation, 2), null);
 	Calendar third_quarter = Phases.JDtoDate(
-		Phases.moonphasebylunation(lun, 3), null);
+		Phases.moonphasebylunation(lunation, 3), null);
 
 	int m_counter = LunaCalc.diffDays(now, last_new);
 
@@ -99,11 +95,10 @@ public class LunaCalc {
 	if (daysToFullMoon == 0){
 //	    phases.put(full_moon, "Full moon is today");
 	    conditions.addEvent(Phase.NEXT_FULL, full_moon, "Full moon is today");
-	}
-	
-		
-	else {
+	} else {
+            // FIXME!!!
 	    desc = "Next full moon will be in " + daysToFullMoon + " days";
+            //desc = "Next full moon will be in " + daysToFullMoon + " days";
 //	    phases.put(full_moon, desc);
 	    conditions.addEvent(Phase.NEXT_FULL, full_moon, desc);
 	    
@@ -114,7 +109,7 @@ public class LunaCalc {
 
 	if (LunaCalc.diffDays(now, full_moon) == 0) {
 	    m_counter = 14;
-	    comment.append(" is full moon");
+	    //comment.append(" is full moon");
 	} else if ((m_counter <= 15) && (m_counter >= 13)) {
 	    m_counter = 14 + LunaCalc.diffDays(now, full_moon);
 	    comment.append(" around full moon");
@@ -227,19 +222,21 @@ public class LunaCalc {
      * 
      */
     public static void main(String[] args) {
+//    System.out.println(banner);
 	Calendar now = Calendar.getInstance(TimeZone.getDefault());
 	MoonConditions moonData = LunaCalc.calcStatus(now);
 	moonData.sort();
 	String formattedTime;
-        String paddedDesc;
+        String description;
 	for(MoonEvent event : moonData.getMoonEvents()){
-    	    formattedTime = String.format(LunaCalc.DATE_FORMAT, event.getDateTime());
-    	    paddedDesc = pad(event.getDescription());
-    	    System.out.println(paddedDesc + " (" + formattedTime + ")");
+//    	    formattedTime = String.format(LunaCalc.DATE_FORMAT, event.getDateTime());
+//    	    paddedDesc = pad(event.getDescription());
+//    	    System.out.println(paddedDesc + " (" + formattedTime + ")");
+    	    System.out.println(event);
 	}
 	formattedTime = String.format(LunaCalc.DATE_FORMAT, moonData.getCurrentPhase().getDateTime());
-	paddedDesc = pad(moonData.getCurrentPhase().getDescription());
-	System.out.println(paddedDesc + " (" + formattedTime + ")");
+	description = pad(moonData.getCurrentPhase().getDescription());
+	System.out.println(description + " (" + formattedTime + ")");
 	System.out.println(moonData.getMoonAge());
     }
 
@@ -248,11 +245,21 @@ public class LunaCalc {
      * @param c2 second date
      * @return
      */
-    private static int diffDays(Calendar c1, Calendar c2) {
-	return Math.abs((int) ((c1.getTimeInMillis() - c2.getTimeInMillis()) / LunaCalc.MILLSECS_PER_DAY));
+    protected static int diffDays(Calendar a, Calendar b) {
+	Calendar a2 = (Calendar) a.clone();
+	Calendar b2 = (Calendar) b.clone();
+	a2.set(Calendar.HOUR_OF_DAY, 0);
+	a2.set(Calendar.MINUTE, 0);
+	a2.set(Calendar.SECOND, 0);
+	a2.set(Calendar.MILLISECOND, 0);
+	b2.set(Calendar.HOUR_OF_DAY, 0);
+	b2.set(Calendar.MINUTE, 0);
+	b2.set(Calendar.SECOND, 0);
+	b2.set(Calendar.MILLISECOND, 0);
+	return (int) ((a2.getTimeInMillis() - b2.getTimeInMillis()) / LunaCalc.MILLSECS_PER_DAY);
     }
 
-    private static String pad(String str) {
+    public static String pad(String str) {
 	return padRight(str, TEXT_WIDTH, '.');
     }
     private static String padRight(String str, int size, char padChar) {
